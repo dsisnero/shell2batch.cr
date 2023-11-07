@@ -1,0 +1,13 @@
+name: shell2batch
+version: 0.1.0
+
+authors:
+  - dsisnero <dsisnero@gmail.com>
+
+targets:
+  shell2batch:
+    main: src/shell2batch.cr
+
+crystal: '>= 1.10.1'
+
+license: MIT
