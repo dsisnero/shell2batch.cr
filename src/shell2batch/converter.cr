@@ -147,7 +147,7 @@ module Shell2Batch
                                                                                                   flg_mappings = win_cmd == "xcopy" ? [{"-[rR]", "/E"}] : [] of Tuple(String, String)
                                                                                                   {win_cmd, flg_mappings, [] of String, [] of String, true}
                                                                                                 when "curl"
-                                                                                                  {"curl -O", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  {"call :download", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "unzip"
                                                                                                   {"unzip", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "./playwright-cli"
