@@ -37,10 +37,19 @@ REM Create the driver directory and change to it
 mkdir driver
 cd driver
 
+REM Function to download a file using bitsadmin
+:download
+setlocal
+set URL=%1
+set OUTPUT=%2
+bitsadmin /transfer myDownloadJob /download /priority normal %URL% %OUTPUT%
+endlocal
+goto :eof
+
 REM Download and unzip the driver
 set FILE_NAME=%FILE_PREFIX%-%PLATFORM%.zip
 echo Downloading driver for %PLATFORM% to %cd%
-curl -O https://playwright.azureedge.net/builds/cli/next/%FILE_NAME%
+call :download https://playwright.azureedge.net/builds/cli/next/%FILE_NAME% %FILE_NAME%
 unzip %FILE_NAME% -d .
 del %FILE_NAME%
 echo Installing browsers for %PLATFORM%
