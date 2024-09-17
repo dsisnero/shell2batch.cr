@@ -1,50 +1,47 @@
-@REM !/usr/bin/env bash
-@echo -e
 @echo off
 
-trap "cd %(pwd% -P)" EXIT
-cd "%(dirname% %0)"%
+REM Change to the script's directory
+cd /d %~dp0
 
-CLI_VERSION=%(head% -1 ./CLI_VERSION)
-FILE_PREFIX=playwright-cli-%CLI_VERSION%
+REM Read the first line of CLI_VERSION into a variable
+set /p CLI_VERSION=<CLI_VERSION
+set FILE_PREFIX=playwright-cli-%CLI_VERSION%
 
-if [[ -d driver ]]; then
-echo "%(pwd)/driver% already exists, delete it first"
-exit 1;
-fi
+REM Check if the driver directory exists
+if exist driver (
+    echo %cd%\driver already exists, delete it first
+    exit /b 1
+)
 
-PLATFORM="unknown"
-case %(uname)% in
-Darwin)
-PLATFORM=mac
-echo "Downloading driver for macOS"
-;;
-Linux)
-PLATFORM=linux
-echo "Downloading driver for Linux"
-;;
-MINGW32*)
-PLATFORM=win32
-echo "Downloading driver for Win32"
-;;
-MINGW64*)
-PLATFORM=win32_x64
-echo "Downloading driver for Win64"
-;;
-*)
-echo "Unknown platform '%(uname)'"%
-exit 1;
-;;
-esac
+REM Determine the platform
+set PLATFORM=unknown
+for /f "tokens=*" %%i in ('uname') do set UNAME=%%i
+if "%UNAME%"=="Darwin" (
+    set PLATFORM=mac
+    echo Downloading driver for macOS
+) else if "%UNAME%"=="Linux" (
+    set PLATFORM=linux
+    echo Downloading driver for Linux
+) else if "%UNAME%"=="MINGW32" (
+    set PLATFORM=win32
+    echo Downloading driver for Win32
+) else if "%UNAME%"=="MINGW64" (
+    set PLATFORM=win32_x64
+    echo Downloading driver for Win64
+) else (
+    echo Unknown platform '%UNAME%'
+    exit /b 1
+)
 
-mkdir  driver
+REM Create the driver directory and change to it
+mkdir driver
 cd driver
 
-FILE_NAME=%FILE_PREFIX-%%PLATFORM.zip%
-echo "Downloading driver for %PLATFORM% to %(pwd)"%
-
-curl -O  https://playwright.azureedge.net/builds/cli/next/%FILE_NAME%
+REM Download and unzip the driver
+set FILE_NAME=%FILE_PREFIX%-%PLATFORM%.zip
+echo Downloading driver for %PLATFORM% to %cd%
+curl -O https://playwright.azureedge.net/builds/cli/next/%FILE_NAME%
 unzip %FILE_NAME% -d .
 del %FILE_NAME%
-echo "Installing browsers for %PLATFORM"%
-.\playwright-cli install
+echo Installing browsers for %PLATFORM%
+playwright-cli install
