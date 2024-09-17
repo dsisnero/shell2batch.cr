@@ -253,7 +253,19 @@ module Shell2Batch
         windows_batch << converted_line
       end
 
-      windows_batch.join("\n")
+      download_function = <<-BATCH
+REM Function to download a file using bitsadmin
+:download
+setlocal
+set URL=%1
+set OUTPUT=%2
+bitsadmin /transfer myDownloadJob /download /priority normal %URL% %OUTPUT%
+endlocal
+goto :eof
+
+BATCH
+
+      download_function + windows_batch.join("\n")
     end
   end
 end
