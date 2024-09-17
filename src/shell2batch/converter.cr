@@ -128,6 +128,14 @@ module Shell2Batch
         post_arguments = [] of String
 
         windows_command, flags_mappings, pre_arguments, post_arguments, modify_path_separator = case shell_command
+                                                                                                when "trap"
+                                                                                                  {"REM trap command not supported in batch", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                when "cd"
+                                                                                                  if arguments.includes?("$(dirname $0)")
+                                                                                                    {"cd /d %~dp0", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  else
+                                                                                                    {"cd", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  end
                                                                                                 when "cp"
                                                                                                   # Determine whether to use xcopy or copy based on the -r flag.
                                                                                                   win_cmd = if /(^|\s)-[^ ]*[rR]/.match(arguments)
@@ -138,6 +146,12 @@ module Shell2Batch
 
                                                                                                   flg_mappings = win_cmd == "xcopy" ? [{"-[rR]", "/E"}] : [] of Tuple(String, String)
                                                                                                   {win_cmd, flg_mappings, [] of String, [] of String, true}
+                                                                                                when "curl"
+                                                                                                  {"curl -O", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                when "unzip"
+                                                                                                  {"unzip", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                when "./playwright-cli"
+                                                                                                  {"playwright-cli", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "mv"
                                                                                                   {"move", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "ls"
