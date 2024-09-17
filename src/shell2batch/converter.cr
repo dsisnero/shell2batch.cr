@@ -162,9 +162,9 @@ module Shell2Batch
                                                                                                 when "clear"
                                                                                                   {"cls", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "grep"
-                                                                                                  {"find", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  {"findstr", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "pwd"
-                                                                                                  {"chdir", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  {"cd", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "export"
                                                                                                   {"set", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "unset"
