@@ -440,9 +440,9 @@ module Shell2Batch
       result = if filtered_batch.size == 1
         filtered_batch.first
       else
-        result = filtered_batch.join("\r\n")
-        result += "\r\n" unless result.ends_with?("\r\n")
-        result
+        batch_text = filtered_batch.join("\r\n")
+        batch_text += "\r\n" unless batch_text.ends_with?("\r\n")
+        batch_text
       end
 
       # Add download function if needed
