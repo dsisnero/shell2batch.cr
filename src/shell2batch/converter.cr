@@ -86,6 +86,11 @@ module Shell2Batch
     end
 
     def replace_vars(arguments : String) : String
+      # Special case for $(dirname $0)
+      if arguments.includes?("$(dirname $0)")
+        return arguments.gsub("$(dirname $0)", "%~dp0")
+      end
+      
       updated_arguments = replace_full_vars(arguments)
       replace_partial_vars(updated_arguments)
     end
@@ -196,8 +201,9 @@ module Shell2Batch
                                                                                                       target, link = args.split(" ", 2)
                                                                                                       # Add /D flag if target ends with \ or / indicating a directory
                                                                                                       is_dir = target.ends_with?("/") || target.ends_with?("\\")
+                                                                                                      target = target.rstrip("/\\")  # Remove trailing slashes
                                                                                                       cmd = is_dir ? "mklink /D" : "mklink"
-                                                                                                      {cmd, flag_mappings, [] of String, [link, target], true}
+                                                                                                      {cmd, [] of Tuple(String, String), [] of String, [link, target], true}
                                                                                                     else
                                                                                                       {"REM Error: ln -s requires both target and link name", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                     end
@@ -206,7 +212,7 @@ module Shell2Batch
                                                                                                     args = arguments.strip
                                                                                                     if args.includes?(" ")
                                                                                                       target, link = args.split(" ", 2)
-                                                                                                      {"mklink /H", flag_mappings, [] of String, [link, target], true}
+                                                                                                      {"mklink /H", [] of Tuple(String, String), [] of String, [link, target], true}
                                                                                                     else
                                                                                                       {"REM Error: ln requires both target and link name", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                     end
@@ -217,7 +223,10 @@ module Shell2Batch
 
         # Modify paths
         if modify_path_separator
-          arguments = arguments.gsub("/", "\\")
+          # Don't modify URLs
+          if !arguments.includes?("http://") && !arguments.includes?("https://")
+            arguments = arguments.gsub("/", "\\")
+          end
         end
         windows_command = windows_command.gsub("/", "\\")
 
