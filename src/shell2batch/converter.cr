@@ -173,8 +173,9 @@ module Shell2Batch
                                                                                                 when "mv"
                                                                                                   {"move", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "ls"
-                                                                                                  # Ignore all flags for ls, just convert to dir
-                                                                                                  {"dir", [] of Tuple(String, String), [] of String, [] of String, true}
+                                                                                                  # Extract any path argument after the flags
+                                                                                                  path = arguments.split(/\s+-[a-zA-Z]+/).last?.try(&.strip)
+                                                                                                  {"dir", [] of Tuple(String, String), [] of String, path ? [path] : [] of String, true}
                                                                                                 when "rm"
                                                                                                   # Determine whether to use rmdir or del based on flags.
                                                                                                   win_cmd = if /-[a-zA-Z]*[rR][a-zA-Z]* /.match(arguments)
@@ -232,6 +233,11 @@ module Shell2Batch
                                                                                                       return "REM Error: ln requires both target and link name"
                                                                                                     end
                                                                                                   end
+                                                                                                when "echo"
+                                                                                                  # Remove quotes if they exist
+                                                                                                  cleaned_args = arguments.strip
+                                                                                                  cleaned_args = cleaned_args.gsub(/^"(.*)"$/, "\\1")
+                                                                                                  {"echo", flag_mappings, [] of String, [cleaned_args], false}
                                                                                                 else
                                                                                                   {shell_command, flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 end
@@ -316,7 +322,7 @@ goto :eof
 
 BATCH
 
-      download_function + windows_batch.join("\n")
+      windows_batch.join("\n") + "\n\n" + download_function
     end
   end
 end
