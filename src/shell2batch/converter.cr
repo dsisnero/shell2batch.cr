@@ -212,8 +212,7 @@ module Shell2Batch
                                                                                                   {"set", flag_mappings, pre_arguments, Array{"="}, false}
                                                                                                 when "touch"
                                                                                                   file_arg = arguments.gsub("/", "\\") + "+,,"
-
-                                                                                                  {"copy", flag_mappings, ["/B ", file_arg.dup], post_arguments, true}
+                                                                                                  {"copy", flag_mappings, ["/B", file_arg.dup], post_arguments, true}
                                                                                                 when "set"
                                                                                                   {"@echo", [{"-x", "on"}, {"\\+x", "off"}], pre_arguments, post_arguments, false}
                                                                                                 when "ln"
