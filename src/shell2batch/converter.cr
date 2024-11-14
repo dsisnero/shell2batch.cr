@@ -7,6 +7,11 @@ class String
 end
 
 module Shell2Batch
+
+  def self.convert(script : String)
+    Converter.run(script)
+  end
+  
   class Converter
     SHELL2BATCH_PREFIX = "# shell2batch:"
 
@@ -270,7 +275,7 @@ module Shell2Batch
 
         # Unpack the tuple ensuring Array(String) types
         windows_command = command_tuple[0].to_s
-        flags_mappings = command_tuple[1]
+        flags_mappings = command_tuple[1].as(Array(Tuple(String,String)))
         pre_arguments = command_tuple[2].as(Array(String))
         post_arguments = command_tuple[3].as(Array(String))
         modify_path_separator = command_tuple[4]
