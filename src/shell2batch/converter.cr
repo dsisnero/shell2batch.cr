@@ -435,8 +435,17 @@ module Shell2Batch
         ""
       end
 
-      # Join with Windows line endings and proper spacing
-      result = windows_batch.reject(&.empty?).join("\r\n")
+      # Handle single line vs multi-line outputs differently
+      filtered_batch = windows_batch.reject(&.empty?)
+      result = if filtered_batch.size == 1
+        filtered_batch.first
+      else
+        result = filtered_batch.join("\r\n")
+        result += "\r\n" unless result.ends_with?("\r\n")
+        result
+      end
+
+      # Add download function if needed
       result += "\r\n" + download_function unless download_function.empty?
       result += "\r\n" unless result.ends_with?("\r\n")
       result
