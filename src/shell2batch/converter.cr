@@ -38,7 +38,7 @@ module Shell2Batch
     def convert_var(value : String, buffer : Array(String))
       case value
       when "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-        buffer << "%" + value
+        buffer << "%" + value + "%"
       when "@"
         buffer << "%*"
       else
@@ -211,9 +211,9 @@ module Shell2Batch
                                                                                                 when "clear"
                                                                                                   {"cls", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "grep"
-                                                                                                  {"findstr", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  {"find", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "pwd"
-                                                                                                  {"cd", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  {"chdir", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "export"
                                                                                                   {"set", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "unset"
@@ -425,7 +425,11 @@ module Shell2Batch
         ""
       end
 
-      windows_batch.join("\n") + "\n\n" + download_function
+      # Join with Windows line endings and proper spacing
+      result = windows_batch.reject(&.empty?).join("\r\n")
+      result += "\r\n" + download_function unless download_function.empty?
+      result += "\r\n" unless result.ends_with?("\r\n")
+      result
     end
   end
 end
