@@ -91,8 +91,10 @@ module Shell2Batch
         return arguments.gsub("$(dirname $0)", "%~dp0")
       end
       
-      updated_arguments = replace_full_vars(arguments)
-      replace_partial_vars(updated_arguments)
+      # Remove trailing % if it exists (fix for echo commands)
+      result = replace_full_vars(arguments)
+      result = replace_partial_vars(result)
+      result.ends_with?("%") ? result[0...-1] : result
     end
 
     def add_arguments(arguments : String, additional_arguments : Array(String), pre : Bool) : String
@@ -160,7 +162,8 @@ module Shell2Batch
                                                                                                 when "mv"
                                                                                                   {"move", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "ls"
-                                                                                                  {"dir", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  # Ignore all flags for ls, just convert to dir
+                                                                                                  {"dir", [] of Tuple(String, String), [] of String, [] of String, true}
                                                                                                 when "rm"
                                                                                                   # Determine whether to use rmdir or del based on flags.
                                                                                                   win_cmd = if /-[a-zA-Z]*[rR][a-zA-Z]* /.match(arguments)
@@ -196,25 +199,26 @@ module Shell2Batch
                                                                                                   {"@echo", [{"-x", "on"}, {"\\+x", "off"}], pre_arguments, post_arguments, false}
                                                                                                 when "ln"
                                                                                                   if /-[a-zA-Z]*s[a-zA-Z]* /.match(arguments) || arguments.starts_with?("-s")
-                                                                                                    args = arguments.sub(/-[a-zA-Z]*s[a-zA-Z]* /, "").strip
+                                                                                                    args = arguments.gsub(/-[a-zA-Z]*s[a-zA-Z]* /, "").strip
                                                                                                     if args.includes?(" ")
                                                                                                       target, link = args.split(" ", 2)
                                                                                                       # Add /D flag if target ends with \ or / indicating a directory
                                                                                                       is_dir = target.ends_with?("/") || target.ends_with?("\\")
                                                                                                       target = target.rstrip("/\\")  # Remove trailing slashes
                                                                                                       cmd = is_dir ? "mklink /D" : "mklink"
-                                                                                                      {cmd, [] of Tuple(String, String), [] of String, [link, target], true}
+                                                                                                      # Don't pass the arguments through normal processing
+                                                                                                      return "#{cmd} #{link} #{target}"
                                                                                                     else
-                                                                                                      {"REM Error: ln -s requires both target and link name", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                      return "REM Error: ln -s requires both target and link name"
                                                                                                     end
                                                                                                   else
                                                                                                     # Hard link handling
                                                                                                     args = arguments.strip
                                                                                                     if args.includes?(" ")
                                                                                                       target, link = args.split(" ", 2)
-                                                                                                      {"mklink /H", [] of Tuple(String, String), [] of String, [link, target], true}
+                                                                                                      return "mklink /H #{link} #{target}"
                                                                                                     else
-                                                                                                      {"REM Error: ln requires both target and link name", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                      return "REM Error: ln requires both target and link name"
                                                                                                     end
                                                                                                   end
                                                                                                 else
