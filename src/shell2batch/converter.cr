@@ -154,6 +154,17 @@ module Shell2Batch
                                                                                                   flg_mappings = win_cmd == "xcopy" ? [{"-[rR]", "/E"}] : [] of Tuple(String, String)
                                                                                                   {win_cmd, flg_mappings, [] of String, [] of String, true}
                                                                                                 when "curl"
+                                                                                                  if arguments.includes?("-o")
+                                                                                                    # Extract output file and URL from curl command
+                                                                                                    args = arguments.split
+                                                                                                    output_index = args.index("-o")
+                                                                                                    if output_index && args.size > output_index + 2
+                                                                                                      output_file = args[output_index + 1]
+                                                                                                      url = args[output_index + 2]
+                                                                                                      return "call :download \"#{url}\" \"#{output_file}\""
+                                                                                                    end
+                                                                                                  end
+                                                                                                  # Default fallback if -o isn't found
                                                                                                   {"call :download", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "unzip"
                                                                                                   {"unzip", flag_mappings, pre_arguments, post_arguments, true}
@@ -297,9 +308,9 @@ module Shell2Batch
 REM Function to download a file using bitsadmin
 :download
 setlocal
-set URL=%1
-set OUTPUT=%2
-bitsadmin /transfer myDownloadJob /download /priority normal %URL% %OUTPUT%
+set "URL=%~1"
+set "OUTPUT=%~2"
+bitsadmin /transfer myDownloadJob /download /priority normal "%URL%" "%OUTPUT%"
 endlocal
 goto :eof
 
