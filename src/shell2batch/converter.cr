@@ -42,7 +42,8 @@ module Shell2Batch
       when "@"
         buffer << "%*"
       else
-        buffer << "%" + value + "%"  # Named vars need both % markers
+        # Only add trailing % for named variables if not in an echo command
+        buffer << "%" + value + (value.match(/^[a-zA-Z]/) ? "%" : "")
       end
     end
 
