@@ -133,8 +133,9 @@ module Shell2Batch
         flag_mappings = [] of Tuple(String, String)
         pre_arguments = [] of String
         post_arguments = [] of String
+        modify_path_separator = false
 
-        windows_command, flags_mappings, pre_arguments, post_arguments, modify_path_separator = case shell_command
+        command_tuple = case shell_command
                                                                                                 when "trap"
                                                                                                   {"REM trap command not supported in batch", flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 when "cd"
@@ -161,19 +162,21 @@ module Shell2Batch
                                                                                                     if output_index && args.size > output_index + 2
                                                                                                       output_file = args[output_index + 1]
                                                                                                       url = args[output_index + 2]
-                                                                                                      return "call :download \"#{url}\" \"#{output_file}\""
+                                                                                                      {"call :download", [] of Tuple(String, String), [] of String, ["\"#{url}\"", "\"#{output_file}\""], false}
+                                                                                                    else
+                                                                                                      {"call :download", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                     end
+                                                                                                  else
+                                                                                                    {"call :download", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                   end
-                                                                                                  # Default fallback if -o isn't found
-                                                                                                  {"call :download", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "unzip"
                                                                                                   # Convert to PowerShell Expand-Archive
                                                                                                   args = arguments.strip
                                                                                                   if args.includes?(" ")
                                                                                                     file, dest = args.split(" ", 2)
-                                                                                                    return "powershell -command \"Expand-Archive -Path '#{file}' -DestinationPath '#{dest}' -Force\""
+                                                                                                    {"powershell -command \"Expand-Archive", [] of Tuple(String, String), [] of String, ["-Path '#{file}'", "-DestinationPath '#{dest}'", "-Force\""], false}
                                                                                                   else
-                                                                                                    return "powershell -command \"Expand-Archive -Path '#{args}' -Force\""
+                                                                                                    {"powershell -command \"Expand-Archive", [] of Tuple(String, String), [] of String, ["-Path '#{args}'", "-Force\""], false}
                                                                                                   end
                                                                                                 when "./playwright-cli"
                                                                                                   {"playwright-cli", flag_mappings, pre_arguments, post_arguments, true}
@@ -224,19 +227,18 @@ module Shell2Batch
                                                                                                       is_dir = target.ends_with?("/") || target.ends_with?("\\")
                                                                                                       target = target.rstrip("/\\")  # Remove trailing slashes
                                                                                                       cmd = is_dir ? "mklink /D" : "mklink"
-                                                                                                      # Don't pass the arguments through normal processing
-                                                                                                      return "#{cmd} #{link} #{target}"
+                                                                                                      {cmd, [] of Tuple(String, String), [] of String, [link, target], false}
                                                                                                     else
-                                                                                                      return "REM Error: ln -s requires both target and link name"
+                                                                                                      {"REM Error: ln -s requires both target and link name", [] of Tuple(String, String), [] of String, [] of String, false}
                                                                                                     end
                                                                                                   else
                                                                                                     # Hard link handling
                                                                                                     args = arguments.strip
                                                                                                     if args.includes?(" ")
                                                                                                       target, link = args.split(" ", 2)
-                                                                                                      return "mklink /H #{link} #{target}"
+                                                                                                      {"mklink /H", [] of Tuple(String, String), [] of String, [link, target], false}
                                                                                                     else
-                                                                                                      return "REM Error: ln requires both target and link name"
+                                                                                                      {"REM Error: ln requires both target and link name", [] of Tuple(String, String), [] of String, [] of String, false}
                                                                                                     end
                                                                                                   end
                                                                                                 when "sudo"
@@ -256,15 +258,22 @@ module Shell2Batch
                                                                                                     command, file = cleaned_args.split(">", 2)
                                                                                                     command = command.gsub(/^"(.*)"$/, "\\1").strip
                                                                                                     command = replace_vars(command)
-                                                                                                    return "echo #{command} > #{file.strip}"
+                                                                                                    {"echo", [] of Tuple(String, String), [] of String, ["#{command} > #{file.strip}"], false}
                                                                                                   else
                                                                                                     cleaned_args = cleaned_args.gsub(/^"(.*)"$/, "\\1")
                                                                                                     cleaned_args = replace_vars(cleaned_args)
-                                                                                                    return "echo #{cleaned_args}"
+                                                                                                    {"echo", [] of Tuple(String, String), [] of String, [cleaned_args], false}
                                                                                                   end
                                                                                                 else
-                                                                                                  {shell_command, flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  {shell_command, flag_mappings, [] of String, [] of String, false}
                                                                                                 end
+
+        # Unpack the tuple ensuring Array(String) types
+        windows_command = command_tuple[0].to_s
+        flags_mappings = command_tuple[1]
+        pre_arguments = command_tuple[2].as(Array(String))
+        post_arguments = command_tuple[3].as(Array(String))
+        modify_path_separator = command_tuple[4]
 
         # Modify paths
         if modify_path_separator
