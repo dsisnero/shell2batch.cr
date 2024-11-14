@@ -189,6 +189,28 @@ module Shell2Batch
                                                                                                   {"copy", flag_mappings, ["/B ", file_arg.dup], post_arguments, true}
                                                                                                 when "set"
                                                                                                   {"@echo", [{"-x", "on"}, {"\\+x", "off"}], pre_arguments, post_arguments, false}
+                                                                                                when "ln"
+                                                                                                  if /-[a-zA-Z]*s[a-zA-Z]* /.match(arguments) || arguments.starts_with?("-s")
+                                                                                                    args = arguments.sub(/-[a-zA-Z]*s[a-zA-Z]* /, "").strip
+                                                                                                    if args.includes?(" ")
+                                                                                                      target, link = args.split(" ", 2)
+                                                                                                      # Add /D flag if target ends with \ or / indicating a directory
+                                                                                                      is_dir = target.ends_with?("/") || target.ends_with?("\\")
+                                                                                                      cmd = is_dir ? "mklink /D" : "mklink"
+                                                                                                      {cmd, flag_mappings, [] of String, [link, target], true}
+                                                                                                    else
+                                                                                                      {"REM Error: ln -s requires both target and link name", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                    end
+                                                                                                  else
+                                                                                                    # Hard link handling
+                                                                                                    args = arguments.strip
+                                                                                                    if args.includes?(" ")
+                                                                                                      target, link = args.split(" ", 2)
+                                                                                                      {"mklink /H", flag_mappings, [] of String, [link, target], true}
+                                                                                                    else
+                                                                                                      {"REM Error: ln requires both target and link name", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                    end
+                                                                                                  end
                                                                                                 else
                                                                                                   {shell_command, flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 end
@@ -239,6 +261,11 @@ module Shell2Batch
     def run(script : String) : String
       lines = script.split('\n')
       windows_batch = [] of String
+
+      # Add warning about admin privileges
+      windows_batch << "@REM This script contains mklink commands that require administrator privileges"
+      windows_batch << "@REM Please run this batch file as administrator"
+      windows_batch << ""
 
       lines.each do |line|
         line = line.strip
