@@ -395,8 +395,12 @@ module Shell2Batch
         windows_batch << ")"
         windows_batch << "@REM Script continues with admin privileges"
       else
-        # Only add @echo off if script contains commands
-        windows_batch << "@echo off" unless script.strip.empty?
+        # Only add @echo off if script contains actual commands (not just comments)
+        has_commands = script.split('\n').any? { |line| 
+          line = line.strip
+          !line.empty? && !line.starts_with?("#")
+        }
+        windows_batch << "@echo off" if has_commands
       end
 
       i = 0
