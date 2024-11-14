@@ -38,11 +38,11 @@ module Shell2Batch
     def convert_var(value : String, buffer : Array(String))
       case value
       when "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-        buffer << "%" + value + "%"
+        buffer << "%" + value  # Numeric params don't need trailing %
       when "@"
         buffer << "%*"
       else
-        buffer << "%" + value + "%"
+        buffer << "%" + value + "%"  # Named vars need both % markers
       end
     end
 
