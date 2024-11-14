@@ -96,10 +96,15 @@ module Shell2Batch
         return arguments.gsub("$(dirname $0)", "%~dp0")
       end
       
-      # Remove trailing % if it exists (fix for echo commands)
       result = replace_full_vars(arguments)
       result = replace_partial_vars(result)
-      result.ends_with?("%") ? result[0...-1] : result
+      
+      # Only remove trailing % for echo commands
+      if arguments.starts_with?("echo ")
+        result.ends_with?("%") ? result[0...-1] : result
+      else
+        result
+      end
     end
 
     def add_arguments(arguments : String, additional_arguments : Array(String), pre : Bool) : String
