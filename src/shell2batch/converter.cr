@@ -274,7 +274,7 @@ module Shell2Batch
             arguments = arguments.gsub("/", "\\")
           end
         end
-        windows_command = windows_command.gsub("/", "\\")
+        windows_command = windows_command.to_s.gsub("/", "\\")
 
         windows_arguments = arguments.dup
 
