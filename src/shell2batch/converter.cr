@@ -389,9 +389,9 @@ module Shell2Batch
         windows_batch << ")"
         windows_batch << "@REM Script continues with admin privileges"
       else
-        windows_batch << "@echo off"
+        # Only add @echo off if script contains commands
+        windows_batch << "@echo off" unless script.strip.empty?
       end
-      windows_batch << ""
 
       i = 0
       while i < lines.size
