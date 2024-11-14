@@ -167,7 +167,14 @@ module Shell2Batch
                                                                                                   # Default fallback if -o isn't found
                                                                                                   {"call :download", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "unzip"
-                                                                                                  {"unzip", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  # Convert to PowerShell Expand-Archive
+                                                                                                  args = arguments.strip
+                                                                                                  if args.includes?(" ")
+                                                                                                    file, dest = args.split(" ", 2)
+                                                                                                    return "powershell -command \"Expand-Archive -Path '#{file}' -DestinationPath '#{dest}' -Force\""
+                                                                                                  else
+                                                                                                    return "powershell -command \"Expand-Archive -Path '#{args}' -Force\""
+                                                                                                  end
                                                                                                 when "./playwright-cli"
                                                                                                   {"playwright-cli", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "mv"
@@ -234,10 +241,18 @@ module Shell2Batch
                                                                                                     end
                                                                                                   end
                                                                                                 when "echo"
-                                                                                                  # Remove quotes if they exist
+                                                                                                  # Handle redirection and variable expansion
                                                                                                   cleaned_args = arguments.strip
-                                                                                                  cleaned_args = cleaned_args.gsub(/^"(.*)"$/, "\\1")
-                                                                                                  {"echo", flag_mappings, [] of String, [cleaned_args], false}
+                                                                                                  if cleaned_args.includes?(">")
+                                                                                                    command, file = cleaned_args.split(">", 2)
+                                                                                                    command = command.gsub(/^"(.*)"$/, "\\1").strip
+                                                                                                    command = replace_vars(command)
+                                                                                                    return "echo #{command} > #{file.strip}"
+                                                                                                  else
+                                                                                                    cleaned_args = cleaned_args.gsub(/^"(.*)"$/, "\\1")
+                                                                                                    cleaned_args = replace_vars(cleaned_args)
+                                                                                                    return "echo #{cleaned_args}"
+                                                                                                  end
                                                                                                 else
                                                                                                   {shell_command, flag_mappings, pre_arguments, post_arguments, false}
                                                                                                 end
@@ -288,6 +303,53 @@ module Shell2Batch
     end
 
     # Converts the provided shell script and returns the windows batch script text.
+    private def convert_shell_condition(condition : String) : String
+      # Convert shell conditions to batch equivalents
+      case condition
+      when /^-d\s+(.+)$/
+        "exist \"#{$1}\\\""
+      when /^-f\s+(.+)$/
+        "exist \"#{$1}\""
+      when /^-z\s+(.+)$/
+        "\"#{$1}\"==\"\""
+      when /(.+)\s+=\s+(.+)/
+        "\"#{$1}\"==\"#{$2}\""
+      when /(.+)\s+!=\s+(.+)/
+        "not \"#{$1}\"==\"#{$2}\""
+      else
+        condition
+      end
+    end
+
+    private def convert_if_statement(lines : Array(String), current_index : Int32) : Tuple(String, Int32)
+      result = [] of String
+      index = current_index
+      
+      while index < lines.size
+        line = lines[index].strip
+        
+        case line
+        when /^if\s+\[\s+(.+)\s+\];\s+then$/
+          condition = convert_shell_condition($1)
+          result << "if #{condition} ("
+        when /^elif\s+\[\s+(.+)\s+\];\s+then$/
+          condition = convert_shell_condition($1)
+          result << ") else if #{condition} ("
+        when "else"
+          result << ") else ("
+        when "fi"
+          result << ")"
+          break
+        else
+          result << "  #{convert_line(line)}" unless line.empty?
+        end
+        
+        index += 1
+      end
+      
+      {result.join("\n"), index}
+    end
+
     def run(script : String) : String
       lines = script.split('\n')
       windows_batch = [] of String
@@ -295,32 +357,40 @@ module Shell2Batch
       # Add warning about admin privileges
       windows_batch << "@REM This script contains mklink commands that require administrator privileges"
       windows_batch << "@REM Please run this batch file as administrator"
+      windows_batch << "@echo off"
       windows_batch << ""
 
-      lines.each do |line|
-        line = line.strip
-        line_string = line.dup
-
-        converted_line = if line_string.size == 0
-                           line_string
-                         else
-                           convert_line(line_string)
-                         end
-
-        windows_batch << converted_line
+      i = 0
+      while i < lines.size
+        line = lines[i].strip
+        
+        if line.starts_with?("if [")
+          converted, new_index = convert_if_statement(lines, i)
+          windows_batch << converted
+          i = new_index
+        else
+          windows_batch << convert_line(line) unless line.empty?
+        end
+        
+        i += 1
       end
 
-      download_function = <<-BATCH
-REM Function to download a file using bitsadmin
-:download
-setlocal
-set "URL=%~1"
-set "OUTPUT=%~2"
-bitsadmin /transfer myDownloadJob /download /priority normal "%URL%" "%OUTPUT%"
-endlocal
-goto :eof
+      # Only add download function if curl command was used
+      download_function = if script.includes?("curl")
+        <<-BATCH
+        REM Function to download a file using bitsadmin
+        :download
+        setlocal
+        set "URL=%~1"
+        set "OUTPUT=%~2"
+        bitsadmin /transfer myDownloadJob /download /priority normal "%URL%" "%OUTPUT%"
+        endlocal
+        goto :eof
 
-BATCH
+        BATCH
+      else
+        ""
+      end
 
       windows_batch.join("\n") + "\n\n" + download_function
     end
