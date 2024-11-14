@@ -1,5 +1,5 @@
 require "./spec_helper"
-require "../src/shell2batch"
+require "../src/shell2batch/converter"
 
 describe Shell2Batch do
   it "can convert a script" do
