@@ -240,6 +240,16 @@ module Shell2Batch
                                                                                                       return "REM Error: ln requires both target and link name"
                                                                                                     end
                                                                                                   end
+                                                                                                when "sudo"
+                                                                                                  # Extract the actual command after sudo
+                                                                                                  cmd = arguments.strip
+                                                                                                  if cmd.starts_with?("install") || cmd.starts_with?("cp") || cmd.starts_with?("rm")
+                                                                                                    # For file operations, use runas
+                                                                                                    {"runas /user:Administrator", flag_mappings, pre_arguments, ["\"#{cmd}\""], false}
+                                                                                                  else
+                                                                                                    # For other commands, just remove sudo and let Windows UAC handle it
+                                                                                                    convert_line(cmd)
+                                                                                                  end
                                                                                                 when "echo"
                                                                                                   # Handle redirection and variable expansion
                                                                                                   cleaned_args = arguments.strip
@@ -354,10 +364,20 @@ module Shell2Batch
       lines = script.split('\n')
       windows_batch = [] of String
 
-      # Add warning about admin privileges
-      windows_batch << "@REM This script contains mklink commands that require administrator privileges"
-      windows_batch << "@REM Please run this batch file as administrator"
-      windows_batch << "@echo off"
+      # Add admin check if script contains sudo or mklink commands
+      needs_admin = script.includes?("sudo") || script.includes?("mklink")
+      if needs_admin
+        windows_batch << "@echo off"
+        windows_batch << "NET SESSION >nul 2>&1"
+        windows_batch << "if %ERRORLEVEL% neq 0 ("
+        windows_batch << "    echo Requesting administrative privileges..."
+        windows_batch << "    powershell -Command \"Start-Process '%~dpnx0' -Verb RunAs\""
+        windows_batch << "    exit /b"
+        windows_batch << ")"
+        windows_batch << "@REM Script continues with admin privileges"
+      else
+        windows_batch << "@echo off"
+      end
       windows_batch << ""
 
       i = 0
