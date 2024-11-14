@@ -7,6 +7,11 @@ class String
 end
 
 module Shell2Batch
+
+  def self.convert(script : String)
+    Converter.run(script)
+  end
+  
   class Converter
     SHELL2BATCH_PREFIX = "# shell2batch:"
 
@@ -33,11 +38,12 @@ module Shell2Batch
     def convert_var(value : String, buffer : Array(String))
       case value
       when "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-        buffer << "%" + value
+        buffer << "%" + value  # Numeric params don't need trailing %
       when "@"
         buffer << "%*"
       else
-        buffer << "%" + value + "%"
+        # Only add trailing % for named variables if not in an echo command
+        buffer << "%" + value + (value.match(/^[a-zA-Z]/) ? "%" : "")
       end
     end
 
@@ -86,8 +92,20 @@ module Shell2Batch
     end
 
     def replace_vars(arguments : String) : String
-      updated_arguments = replace_full_vars(arguments)
-      replace_partial_vars(updated_arguments)
+      # Special case for $(dirname $0)
+      if arguments.includes?("$(dirname $0)")
+        return arguments.gsub("$(dirname $0)", "%~dp0")
+      end
+      
+      result = replace_full_vars(arguments)
+      result = replace_partial_vars(result)
+      
+      # Only remove trailing % for echo commands
+      if arguments.starts_with?("echo ")
+        result.ends_with?("%") ? result[0...-1] : result
+      else
+        result
+      end
     end
 
     def add_arguments(arguments : String, additional_arguments : Array(String), pre : Bool) : String
@@ -126,8 +144,17 @@ module Shell2Batch
         flag_mappings = [] of Tuple(String, String)
         pre_arguments = [] of String
         post_arguments = [] of String
+        modify_path_separator = false
 
-        windows_command, flags_mappings, pre_arguments, post_arguments, modify_path_separator = case shell_command
+        command_tuple = case shell_command
+                                                                                                when "trap"
+                                                                                                  {"REM trap command not supported in batch", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                when "cd"
+                                                                                                  if arguments.includes?("$(dirname $0)")
+                                                                                                    {"cd /d %~dp0", flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  else
+                                                                                                    {"cd", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  end
                                                                                                 when "cp"
                                                                                                   # Determine whether to use xcopy or copy based on the -r flag.
                                                                                                   win_cmd = if /(^|\s)-[^ ]*[rR]/.match(arguments)
@@ -138,10 +165,38 @@ module Shell2Batch
 
                                                                                                   flg_mappings = win_cmd == "xcopy" ? [{"-[rR]", "/E"}] : [] of Tuple(String, String)
                                                                                                   {win_cmd, flg_mappings, [] of String, [] of String, true}
+                                                                                                when "curl"
+                                                                                                  if arguments.includes?("-o")
+                                                                                                    # Extract output file and URL from curl command
+                                                                                                    args = arguments.split
+                                                                                                    output_index = args.index("-o")
+                                                                                                    if output_index && args.size > output_index + 2
+                                                                                                      output_file = args[output_index + 1]
+                                                                                                      url = args[output_index + 2]
+                                                                                                      {"call :download", [] of Tuple(String, String), [] of String, ["\"#{url}\"", "\"#{output_file}\""], false}
+                                                                                                    else
+                                                                                                      {"call :download", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                    end
+                                                                                                  else
+                                                                                                    {"call :download", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  end
+                                                                                                when "unzip"
+                                                                                                  # Convert to PowerShell Expand-Archive
+                                                                                                  args = arguments.strip
+                                                                                                  if args.includes?(" ")
+                                                                                                    file, dest = args.split(" ", 2)
+                                                                                                    {"powershell -command \"Expand-Archive", [] of Tuple(String, String), [] of String, ["-Path '#{file}'", "-DestinationPath '#{dest}'", "-Force\""], false}
+                                                                                                  else
+                                                                                                    {"powershell -command \"Expand-Archive", [] of Tuple(String, String), [] of String, ["-Path '#{args}'", "-Force\""], false}
+                                                                                                  end
+                                                                                                when "./playwright-cli"
+                                                                                                  {"playwright-cli", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "mv"
                                                                                                   {"move", flag_mappings, pre_arguments, post_arguments, true}
                                                                                                 when "ls"
-                                                                                                  {"dir", flag_mappings, pre_arguments, post_arguments, true}
+                                                                                                  # Extract any path argument after the flags
+                                                                                                  path = arguments.split(/\s+-[a-zA-Z]+/).last?.try(&.strip)
+                                                                                                  {"dir", [] of Tuple(String, String), [] of String, path ? [path] : [] of String, true}
                                                                                                 when "rm"
                                                                                                   # Determine whether to use rmdir or del based on flags.
                                                                                                   win_cmd = if /-[a-zA-Z]*[rR][a-zA-Z]* /.match(arguments)
@@ -171,19 +226,74 @@ module Shell2Batch
                                                                                                   {"set", flag_mappings, pre_arguments, Array{"="}, false}
                                                                                                 when "touch"
                                                                                                   file_arg = arguments.gsub("/", "\\") + "+,,"
-
                                                                                                   {"copy", flag_mappings, ["/B ", file_arg.dup], post_arguments, true}
                                                                                                 when "set"
                                                                                                   {"@echo", [{"-x", "on"}, {"\\+x", "off"}], pre_arguments, post_arguments, false}
+                                                                                                when "ln"
+                                                                                                  if /-[a-zA-Z]*s[a-zA-Z]* /.match(arguments) || arguments.starts_with?("-s")
+                                                                                                    args = arguments.gsub(/-[a-zA-Z]*s[a-zA-Z]* /, "").strip
+                                                                                                    if args.includes?(" ")
+                                                                                                      target, link = args.split(" ", 2)
+                                                                                                      # Add /D flag if target ends with \ or / indicating a directory
+                                                                                                      is_dir = target.ends_with?("/") || target.ends_with?("\\")
+                                                                                                      target = target.rstrip("/\\")  # Remove trailing slashes
+                                                                                                      cmd = is_dir ? "mklink /D" : "mklink"
+                                                                                                      {cmd, [] of Tuple(String, String), [] of String, [link, target], false}
+                                                                                                    else
+                                                                                                      {"REM Error: ln -s requires both target and link name", [] of Tuple(String, String), [] of String, [] of String, false}
+                                                                                                    end
+                                                                                                  else
+                                                                                                    # Hard link handling
+                                                                                                    args = arguments.strip
+                                                                                                    if args.includes?(" ")
+                                                                                                      target, link = args.split(" ", 2)
+                                                                                                      {"mklink /H", [] of Tuple(String, String), [] of String, [link, target], false}
+                                                                                                    else
+                                                                                                      {"REM Error: ln requires both target and link name", [] of Tuple(String, String), [] of String, [] of String, false}
+                                                                                                    end
+                                                                                                  end
+                                                                                                when "sudo"
+                                                                                                  # Extract the actual command after sudo
+                                                                                                  cmd = arguments.strip
+                                                                                                  if cmd.starts_with?("install") || cmd.starts_with?("cp") || cmd.starts_with?("rm")
+                                                                                                    # For file operations, use runas
+                                                                                                    {"runas /user:Administrator", flag_mappings, pre_arguments, ["\"#{cmd}\""], false}
+                                                                                                  else
+                                                                                                    # For other commands, just remove sudo and let Windows UAC handle it
+                                                                                                    convert_line(cmd)
+                                                                                                  end
+                                                                                                when "echo"
+                                                                                                  # Handle redirection and variable expansion
+                                                                                                  cleaned_args = arguments.strip
+                                                                                                  if cleaned_args.includes?(">")
+                                                                                                    command, file = cleaned_args.split(">", 2)
+                                                                                                    command = command.gsub(/^"(.*)"$/, "\\1").strip
+                                                                                                    command = replace_vars(command)
+                                                                                                    {"echo", [] of Tuple(String, String), [] of String, ["#{command} > #{file.strip}"], false}
+                                                                                                  else
+                                                                                                    cleaned_args = cleaned_args.gsub(/^"(.*)"$/, "\\1")
+                                                                                                    cleaned_args = replace_vars(cleaned_args)
+                                                                                                    {"echo", [] of Tuple(String, String), [] of String, [cleaned_args], false}
+                                                                                                  end
                                                                                                 else
-                                                                                                  {shell_command, flag_mappings, pre_arguments, post_arguments, false}
+                                                                                                  {shell_command, flag_mappings, [] of String, [] of String, false}
                                                                                                 end
+
+        # Unpack the tuple ensuring Array(String) types
+        windows_command = command_tuple[0].to_s
+        flags_mappings = command_tuple[1].as(Array(Tuple(String,String)))
+        pre_arguments = command_tuple[2].as(Array(String))
+        post_arguments = command_tuple[3].as(Array(String))
+        modify_path_separator = command_tuple[4]
 
         # Modify paths
         if modify_path_separator
-          arguments = arguments.gsub("/", "\\")
+          # Don't modify URLs
+          if !arguments.includes?("http://") && !arguments.includes?("https://")
+            arguments = arguments.gsub("/", "\\")
+          end
         end
-        windows_command = windows_command.gsub("/", "\\")
+        windows_command = windows_command.to_s.gsub("/", "\\")
 
         windows_arguments = arguments.dup
 
@@ -222,24 +332,123 @@ module Shell2Batch
     end
 
     # Converts the provided shell script and returns the windows batch script text.
+    private def convert_shell_condition(condition : String) : String
+      # Convert shell conditions to batch equivalents
+      case condition
+      when /^-d\s+(.+)$/
+        "exist \"#{$1}\\\""
+      when /^-f\s+(.+)$/
+        "exist \"#{$1}\""
+      when /^-z\s+(.+)$/
+        "\"#{$1}\"==\"\""
+      when /(.+)\s+=\s+(.+)/
+        "\"#{$1}\"==\"#{$2}\""
+      when /(.+)\s+!=\s+(.+)/
+        "not \"#{$1}\"==\"#{$2}\""
+      else
+        condition
+      end
+    end
+
+    private def convert_if_statement(lines : Array(String), current_index : Int32) : Tuple(String, Int32)
+      result = [] of String
+      index = current_index
+      
+      while index < lines.size
+        line = lines[index].strip
+        
+        case line
+        when /^if\s+\[\s+(.+)\s+\];\s+then$/
+          condition = convert_shell_condition($1)
+          result << "if #{condition} ("
+        when /^elif\s+\[\s+(.+)\s+\];\s+then$/
+          condition = convert_shell_condition($1)
+          result << ") else if #{condition} ("
+        when "else"
+          result << ") else ("
+        when "fi"
+          result << ")"
+          break
+        else
+          result << "  #{convert_line(line)}" unless line.empty?
+        end
+        
+        index += 1
+      end
+      
+      {result.join("\n"), index}
+    end
+
     def run(script : String) : String
       lines = script.split('\n')
       windows_batch = [] of String
 
-      lines.each do |line|
-        line = line.strip
-        line_string = line.dup
-
-        converted_line = if line_string.size == 0
-                           line_string
-                         else
-                           convert_line(line_string)
-                         end
-
-        windows_batch << converted_line
+      # Add admin check if script contains sudo or mklink commands
+      needs_admin = script.includes?("sudo") || script.includes?("mklink")
+      if needs_admin
+        windows_batch << "@echo off"
+        windows_batch << "NET SESSION >nul 2>&1"
+        windows_batch << "if %ERRORLEVEL% neq 0 ("
+        windows_batch << "    echo Requesting administrative privileges..."
+        windows_batch << "    powershell -Command \"Start-Process '%~dpnx0' -Verb RunAs\""
+        windows_batch << "    exit /b"
+        windows_batch << ")"
+        windows_batch << "@REM Script continues with admin privileges"
+      else
+        # Only add @echo off if script contains actual commands (not just comments)
+        has_commands = script.split('\n').any? { |line| 
+          line = line.strip
+          !line.empty? && !line.starts_with?("#")
+        }
+        windows_batch << "@echo off" if has_commands
       end
 
-      windows_batch.join("\n")
+      i = 0
+      while i < lines.size
+        line = lines[i].strip
+        
+        if line.starts_with?("if [")
+          converted, new_index = convert_if_statement(lines, i)
+          windows_batch << converted
+          i = new_index
+        else
+          windows_batch << convert_line(line) unless line.empty?
+        end
+        
+        i += 1
+      end
+
+      # Only add download function if curl command was used
+      download_function = if script.includes?("curl")
+        <<-BATCH
+        REM Function to download a file using bitsadmin
+        :download
+        setlocal
+        set "URL=%~1"
+        set "OUTPUT=%~2"
+        bitsadmin /transfer myDownloadJob /download /priority normal "%URL%" "%OUTPUT%"
+        endlocal
+        goto :eof
+
+        BATCH
+      else
+        ""
+      end
+
+      # Handle single line vs multi-line outputs differently
+      filtered_batch = windows_batch.reject(&.empty?)
+      result = if filtered_batch.size == 1
+        filtered_batch.first
+      else
+        batch_text = filtered_batch.join("\r\n")
+        batch_text += "\r\n" unless batch_text.ends_with?("\r\n")
+        batch_text
+      end
+
+      # Add download function if needed
+      result += "\r\n" + download_function unless download_function.empty?
+      result += "\r\n" unless result.ends_with?("\r\n")
+      result
     end
   end
 end

@@ -432,5 +432,35 @@ move file2 file3
       output = converter.convert_line("./${MYVAR}.exe/something")
       output.should eq ".\\%MYVAR%.exe\\something"
     end
+
+    it "convert line symlink file" do
+      converter = Converter.new
+      output = converter.convert_line("ln -s target link_name")
+      output.should eq "mklink link_name target"
+    end
+
+    it "convert line symlink directory" do
+      converter = Converter.new
+      output = converter.convert_line("ln -s target/ link_name")
+      output.should eq "mklink /D link_name target"
+    end
+
+    it "convert line hard link" do
+      converter = Converter.new
+      output = converter.convert_line("ln original.txt hard_link.txt")
+      output.should eq "mklink /H hard_link.txt original.txt"
+    end
+
+    it "convert line invalid symlink" do
+      converter = Converter.new
+      output = converter.convert_line("ln -s target")
+      output.should eq "REM Error: ln -s requires both target and link name"
+    end
+
+    it "convert line invalid hard link" do
+      converter = Converter.new
+      output = converter.convert_line("ln original.txt")
+      output.should eq "REM Error: ln requires both target and link name"
+    end
   end
 end

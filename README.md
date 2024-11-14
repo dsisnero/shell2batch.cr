@@ -1,17 +1,66 @@
 # shell2bat
 
 ## Overview
-While it is not really possible to take every shell script and automatically convert it to a windows batch file, this library provides a way to convert simple basic shell commands to windows batch commands.<br>
-<br>
-It is possible to provide custom conversion hints by using the **# shell2batch:** prefix (see below example).
+A Crystal library that converts shell scripts to Windows batch files. While not every shell script can be automatically converted, this library handles most common scenarios and provides ways to customize the conversion process.
 
-A crystal port of https://github.com/sagiegurari/shell2batch
+Key features:
+- Automatic command conversion
+- Administrative privilege handling
+- Symbolic link support
+- Control flow conversion
+- Variable substitution
+- Custom conversion hints
+
+A Crystal port of https://github.com/sagiegurari/shell2batch
 
 ## Installation
 
-TODO: Write installation instructions here
+```bash
+# Build from source
+git clone https://github.com/dsisnero/shell2batch.git
+cd shell2batch
+shards build --release --static
+```
+
+The executable will be in the `bin` directory.
+
+## Command Reference
+
+### File Operations
+| Shell Command | Windows Equivalent | Notes |
+|--------------|-------------------|--------|
+| `cp file1 file2` | `copy file1 file2` | Simple file copy |
+| `cp -r dir1 dir2` | `xcopy dir1 dir2 /E` | Recursive directory copy |
+| `mv file1 file2` | `move file1 file2` | Move/rename |
+| `rm file` | `del file` | Delete file |
+| `rm -rf dir` | `rmdir /S /Q dir` | Recursive directory delete |
+| `mkdir -p dir` | `mkdir dir` | Create directory |
+| `touch file` | `copy /B file+,, file` | Create/update file |
+
+### Symbolic Links
+| Shell Command | Windows Equivalent | Notes |
+|--------------|-------------------|--------|
+| `ln -s target link` | `mklink link target` | File symlink |
+| `ln -s target/ link` | `mklink /D link target` | Directory symlink |
+| `ln target link` | `mklink /H link target` | Hard link |
+
+### Administrative Operations
+| Shell Command | Windows Equivalent | Notes |
+|--------------|-------------------|--------|
+| `sudo command` | `runas /user:Administrator "command"` | Run as admin |
+| `sudo cp` | `runas /user:Administrator "copy"` | Admin file operations |
+
+### Variables
+| Shell Syntax | Batch Syntax | Notes |
+|--------------|-------------|--------|
+| `export VAR=value` | `set VAR=value` | Set variable |
+| `$VAR` | `%VAR%` | Variable expansion |
+| `${VAR}` | `%VAR%` | Variable expansion |
+| `$(dirname $0)` | `%~dp0` | Script directory |
 
 ## Usage
+
+### Command Line
 
 ## Usage
 Simply include the library and invoke the convert function as follows:
@@ -78,7 +127,91 @@ CONVERTED
 
 ## Development
 
-TODO: Write development instructions here
+### Running Tests
+```bash
+crystal spec
+```
+
+### Adding New Command Conversions
+To add support for a new shell command, modify `src/shell2batch/converter.cr` and add a case to the command matching:
+
+```crystal
+when "new_command"
+  {"windows_command", flag_mappings, pre_arguments, post_arguments, modify_path}
+```
+
+### Custom Conversions
+You can provide custom Windows commands for specific lines using the `# shell2batch:` prefix:
+
+```bash
+complex_command --flag1 value1 # shell2batch: windows_command /flag1 value1
+```
+
+## Examples
+
+### Basic Script
+```bash
+#!/bin/bash
+echo "Creating directories..."
+mkdir -p test/nested/folders
+cd test
+touch example.txt
+echo "Hello World" > example.txt
+```
+
+Converts to:
+```batch
+@echo off
+echo Creating directories...
+mkdir test\nested\folders
+cd test
+copy /B example.txt+,, example.txt
+echo Hello World > example.txt
+```
+
+### Administrative Operations
+```bash
+#!/bin/bash
+sudo cp -r /src /dest
+ln -s target link_name
+```
+
+Converts to:
+```batch
+@echo off
+NET SESSION >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo Requesting administrative privileges...
+    powershell -Command "Start-Process '%~dpnx0' -Verb RunAs"
+    exit /b
+)
+runas /user:Administrator "xcopy /E \src \dest"
+mklink link_name target
+```
+
+### Control Flow
+```bash
+#!/bin/bash
+if [ -d "$DIR" ]; then
+    echo "Directory exists"
+elif [ -f "$FILE" ]; then
+    echo "File exists"
+else
+    echo "Neither exists"
+fi
+```
+
+Converts to:
+```batch
+@echo off
+if exist "%DIR%\" (
+    echo Directory exists
+) else if exist "%FILE%" (
+    echo File exists
+) else (
+    echo Neither exists
+)
+```
 
 ## Contributing
 

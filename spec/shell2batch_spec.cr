@@ -1,8 +1,8 @@
 require "./spec_helper"
-require "../src/shell2bat"
+require "../src/shell2batch/converter"
 
-module Shell2Batch
-  it "can convert a script " do
+describe Shell2Batch do
+  it "can convert a script" do
     script = <<-SCRIPT
                 set -x
 

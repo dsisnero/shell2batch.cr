@@ -3,11 +3,8 @@ require "./shell2batch/converter"
 
 module Shell2Batch
   VERSION = "0.1.0"
-
-  def self.convert(str : String)
-    Shell2Batch::Converter.run(str)
-  end
 end
+
 
 # TODO: Add your documentation as shown in the previous answer.
 
