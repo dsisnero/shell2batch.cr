@@ -14,19 +14,21 @@ Converts a shell script to a batch script using Shell2Batch.
 Usage: shell2batch [options] <script_file>
 DESCRIPTION
 
-# Define options for the command-line program
-OptionParser.parse do |parser|
-  parser.banner = program_description
+# Create an instance of OptionParser
+parser = OptionParser.new
+parser.banner = program_description
 
-  parser.on("-h", "--help", "Show this help message") do
-    puts parser
-    exit
-  end
+parser.on("-h", "--help", "Show this help message") do
+  puts parser
+  exit
 end
+
+# Parse the command-line arguments
+parser.parse!
 
 # Check if the script filename is provided as an argument
 if ARGV.size != 1
-  puts "Error: Please provide a single shell script filename as an argument."
+  puts parser
   exit(1)
 end
 
