@@ -23,17 +23,17 @@ parser.on("-h", "--help", "Show this help message") do
   exit
 end
 
-# Parse the command-line arguments and get the remaining arguments
-args = parser.parse(ARGV)
+# Parse the command-line arguments and modify ARGV
+parser.parse(ARGV)
 
 # Check if the script filename is provided as an argument
-if args.size != 1
+if ARGV.size != 1
   puts parser
   exit(1)
 end
 
 # Read the script filename from the remaining arguments
-script_filename = args[0]
+script_filename = ARGV[0]
 
 # Check if the file exists
 unless File.exists?(script_filename)
