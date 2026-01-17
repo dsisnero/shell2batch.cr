@@ -5,7 +5,7 @@ module Shell2Batch
     it "converts app-neovim.sh correctly" do
       content = File.read("examples/app-neovim.sh")
       output = Shell2Batch.convert(content)
-      
+
       # Should not have double quotes issue
       output.should_not contain("\"\"$HOME")
       # Should convert git command
@@ -17,7 +17,7 @@ module Shell2Batch
     it "converts example.sh correctly" do
       content = File.read("examples/example.sh")
       output = Shell2Batch.convert(content)
-      
+
       # Should start with @echo off, not @REM !/bin/bash
       output.should start_with("@echo off")
       # Should have proper dir command
@@ -30,7 +30,7 @@ module Shell2Batch
     it "converts sleep_test.sh correctly" do
       content = File.read("examples/sleep_test.sh")
       output = Shell2Batch.convert(content)
-      
+
       # Should start with @echo off
       output.should start_with("@echo off")
       # Should have proper timeout command with /t not \t
@@ -41,7 +41,7 @@ module Shell2Batch
     it "converts medium.mk correctly" do
       content = File.read("examples/medium.mk")
       output = Shell2Batch.convert(content)
-      
+
       # Should handle Makefile suffix replacement
       output.should_not contain("$(SOURCES:.c=.o)")
       # Should have valid OBJECTS variable
@@ -51,7 +51,7 @@ module Shell2Batch
     it "converts complex.mk correctly" do
       content = File.read("examples/complex.mk")
       output = Shell2Batch.convert(content)
-      
+
       # Should convert rm -rf properly
       output.should_not contain("rm -rf")
       # Should handle Makefile suffix replacement
@@ -63,7 +63,7 @@ module Shell2Batch
     it "converts makefiles/complex.mk correctly" do
       content = File.read("examples/makefiles/complex.mk")
       output = Shell2Batch.convert(content)
-      
+
       # Should have proper variable assignments
       output.should contain("set SRC_DIR=src")
       output.should contain("set OBJ_DIR=obj")

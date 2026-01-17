@@ -371,7 +371,7 @@ module Shell2Batch
           var_name = $1
           from_suffix = $2
           to_suffix = $3
-          
+
           if evaluate && (source_value = @variables_hash[var_name]?)
             # Replace .c with .o in each file
             files = source_value.split
@@ -628,7 +628,7 @@ module Shell2Batch
         var_name = $1
         from_suffix = $2
         to_suffix = $3
-        
+
         # Get the source variable value
         if source_value = @variables_hash[var_name]?
           # Check if source_value contains a function (like wildcard)
@@ -655,7 +655,7 @@ module Shell2Batch
                 file
               end
             end
-            
+
             # Return the transformed list
             return "set #{var.name}=#{transformed_files.join(" ")}"
           end
@@ -728,7 +728,7 @@ module Shell2Batch
         paren_count = 0
         in_pattern = false
         pattern = ""
-        
+
         # Simple approach: find the matching closing paren
         # Start after "wildcard"
         if idx = value.index("wildcard")
@@ -737,7 +737,7 @@ module Shell2Batch
           while start_idx < value.size && value[start_idx].whitespace?
             start_idx += 1
           end
-          
+
           # Now find matching closing paren
           paren_count = 0
           i = start_idx
@@ -756,7 +756,7 @@ module Shell2Batch
             end
             i += 1
           end
-          
+
           if !pattern.empty?
             # Resolve any variables in the pattern
             resolved_pattern = resolve_variable(pattern)
@@ -785,14 +785,14 @@ module Shell2Batch
     private def convert_shell_commands_in_value(value : String) : String
       # Convert shell commands that appear in variable values
       result = value.dup
-      
+
       # Handle rm -rf -> rmdir /S /Q
       if result == "rm -rf"
         result = "rmdir /S /Q"
       elsif result == "mkdir -p"
         result = "mkdir"
       end
-      
+
       # Also resolve variable references
       result = result.gsub(/\$\(([a-zA-Z_][a-zA-Z0-9_]*)\)/) do |match|
         var_name = $1
@@ -802,7 +802,7 @@ module Shell2Batch
           match
         end
       end
-      
+
       result
     end
 
