@@ -38,7 +38,7 @@ module Shell2Batch
         CFLAGS = -Wall
 
         obj/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+        	$(CC) $(CFLAGS) -c $< -o $@
       MAKEFILE
 
       converter = MakefileConverter.new(content)
@@ -54,7 +54,7 @@ module Shell2Batch
         OBJ_DIR = obj
 
         prepare:
-	@mkdir -p $(OBJ_DIR)
+        	@mkdir -p $(OBJ_DIR)
       MAKEFILE
 
       converter = MakefileConverter.new(content)
@@ -71,7 +71,7 @@ module Shell2Batch
         OBJECTS = main.o utils.o
 
         $(TARGET): $(OBJECTS)
-	$(CC) -o $@ $^
+        	$(CC) -o $@ $^
       MAKEFILE
 
       converter = MakefileConverter.new(content)
