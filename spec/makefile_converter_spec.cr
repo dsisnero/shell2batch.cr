@@ -13,7 +13,7 @@ module Shell2Batch
       output.should contain("set TARGET=hello")
       output.should contain("set SOURCES=hello.c")
       output.should contain(":all")
-      output.should contain(":%TARGET%")
+      output.should contain(":hello")  # $(TARGET) resolved to hello
       output.should contain(":clean")
       output.should contain("del /Q %TARGET%")
     end
@@ -37,7 +37,7 @@ module Shell2Batch
       output.should contain("set CFLAGS=-Wall -O2")
       output.should contain("set PROGRAM=myapp")
       output.should contain("set SOURCES=main.c utils.c")
-      output.should contain(":%PROGRAM%")
+      output.should contain(":myapp")  # $(PROGRAM) resolved to myapp
       output.should contain(":clean")
     end
 
