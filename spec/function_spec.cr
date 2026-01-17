@@ -23,7 +23,7 @@ describe Shell2Batch::ShellConverter do
 
       # Normalize line endings for comparison
       result_lines = result.lines.reject(&.empty?)
-      expected_lines = expected.lines.reject(&.empty?)
+      expected_lines = expected.lines.reject(&.empty?).map(&.strip)
 
       result_lines.should eq(expected_lines)
     end

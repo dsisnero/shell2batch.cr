@@ -5,7 +5,7 @@ module Shell2Batch
 
     def convert(content : String) : String
       parse_functions(content)
-      run(content)
+      run(content, true)
     end
 
     def convert_line(line : String) : String
@@ -25,7 +25,9 @@ module Shell2Batch
 
         # Check if this is a function call
         if @functions.has_key?(shell_command)
-          return "call :#{shell_command} #{arguments}"
+          # Strip quotes from arguments for function calls
+          stripped_args = arguments.split(' ').map { |arg| strip_quotes(arg) }.join(' ')
+          return "call :#{shell_command} #{stripped_args}"
         end
 
         # Try to find a command mapping first
@@ -137,7 +139,13 @@ module Shell2Batch
         windows_command = if windows_arguments.size > 0
                             command = String::Builder.new(windows_command)
                             command << " "
-                            command << windows_arguments
+                            # Strip quotes from arguments for certain commands
+                            if shell_command == "echo"
+                              # Strip quotes from the entire arguments string
+                              command << strip_quotes(windows_arguments)
+                            else
+                              command << windows_arguments
+                            end
                             command.to_s
                           else
                             windows_command
@@ -199,10 +207,13 @@ module Shell2Batch
     # Convert a shell function to a batch subroutine
     private def convert_function(name : String, body : String) : String
       # Convert the function body using existing logic
-      converted_body = run(body)
+      converted_body = run(body, false)
 
       # Replace shell parameters ($1, $2, etc.) with batch parameters (%1, %2, etc.)
       converted_body = converted_body.gsub(/\$(\d+)/, "%\\1")
+
+      # Handle shell arithmetic $(( ... )) -> ( ... )
+      converted_body = converted_body.gsub(/\$\(\((.+?)\)\)/, "(\\1)")
 
       # Handle return statements
       converted_body = converted_body.gsub(/return\s+(\d+)/, "exit /b \\1")
@@ -263,13 +274,13 @@ module Shell2Batch
       {result.join("\n"), index}
     end
 
-    def run(script : String) : String
+    def run(script : String, is_main_script : Bool = true) : String
       lines = script.split('\n')
       windows_batch = [] of String
 
       # Add admin check if script contains sudo or mklink commands
       needs_admin = script.includes?("sudo") || script.includes?("mklink")
-      if needs_admin
+      if needs_admin && is_main_script
         windows_batch << "@echo off"
         windows_batch << "NET SESSION >nul 2>&1"
         windows_batch << "if %ERRORLEVEL% neq 0 ("
@@ -299,7 +310,7 @@ module Shell2Batch
           converted, new_index = convert_if_statement(lines, i)
           windows_batch << converted
           i = new_index
-        elsif is_function_definition?(stripped_line)
+        elsif is_function_definition?(stripped_line) && is_main_script
           # Skip function definitions during main script processing
           # They're already parsed and will be converted later
           _, new_index = extract_function_body(lines, i)
@@ -312,7 +323,7 @@ module Shell2Batch
       end
 
       # Only add download function if curl command was used
-      download_function = if script.includes?("curl")
+      download_function = if script.includes?("curl") && is_main_script
                             <<-BATCH
         REM Function to download a file using bitsadmin
         :download
@@ -344,8 +355,8 @@ module Shell2Batch
       # Add download function if needed
       result += "\r\n" + download_function unless download_function.empty?
 
-      # Add converted functions at the end
-      unless @functions.empty?
+      # Add converted functions at the end (only for main script)
+      if is_main_script && !@functions.empty?
         result += "\r\ngoto :eof\r\n" # Prevent fall-through to subroutines
         @functions.each do |name, body|
           result += "\r\n" + convert_function(name, body) + "\r\n"

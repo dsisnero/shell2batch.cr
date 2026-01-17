@@ -61,25 +61,55 @@ module Shell2Batch
     end
 
     def replace_partial_vars(arguments : String) : String
-      parts = arguments.split("$")
-      buffer = [] of String
+      result = String::Builder.new
+      i = 0
 
-      buffer << parts.shift
+      while i < arguments.size
+        if arguments[i] == '$' && i + 1 < arguments.size
+          # Found a variable reference
+          i += 1 # Skip the $
 
-      parts.each do |part|
-        index = part.index(" ")
-        before, after =
-          if index
-            {part[0...index], part[index..-1]}
+          # Check what comes after $
+          if arguments[i] == '@'
+            # Special parameter $@
+            result << "%*"
+            i += 1
+          elsif arguments[i] == '{'
+            # This should have been handled by replace_full_vars
+            # But just in case, skip to next }
+            while i < arguments.size && arguments[i] != '}'
+              i += 1
+            end
+            if i < arguments.size
+              i += 1 # Skip the }
+            end
+          elsif arguments[i].ascii_number?
+            # Positional parameter $1, $2, etc.
+            start = i
+            while i < arguments.size && arguments[i].ascii_number?
+              i += 1
+            end
+            var_name = arguments[start...i]
+            result << "%" + var_name
+          elsif arguments[i].ascii_letter? || arguments[i] == '_'
+            # Named variable $VAR, $HOME, etc.
+            start = i
+            while i < arguments.size && (arguments[i].ascii_alphanumeric? || arguments[i] == '_')
+              i += 1
+            end
+            var_name = arguments[start...i]
+            result << "%" + var_name + "%"
           else
-            {part, ""}
+            # Not a valid variable, just copy the $
+            result << "$"
           end
-
-        convert_var(before, buffer)
-        buffer << after if after.size > 0
+        else
+          result << arguments[i]
+          i += 1
+        end
       end
 
-      buffer.join("")
+      result.to_s
     end
 
     def replace_vars(arguments : String) : String
@@ -125,6 +155,15 @@ module Shell2Batch
         path
       else
         path.gsub("/", "\\")
+      end
+    end
+
+    # Strip surrounding quotes from a string if present
+    def strip_quotes(str : String) : String
+      if str.size >= 2 && str[0] == '"' && str[-1] == '"'
+        str[1...-1]
+      else
+        str
       end
     end
 
