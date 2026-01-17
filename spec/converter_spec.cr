@@ -222,24 +222,31 @@ module Shell2Batch
       output.should eq "copy file1 file2"
     end
 
-    pending "run multi-line" do
+    it "run multi-line" do
       converter = ShellConverter.new
-      output = converter.run(%(
+      # Remove leading/trailing whitespace from input
+      script = %(
       #this is some test code
       cp file1 file2
 
       #another
       mv file2 file3
-    ))
-      # Windows batch files use \r\n line endings
-      expected = %(
-@REM this is some test code
-copy file1 file2
+    ).strip
+      output = converter.run(script)
 
-@REM another
-move file2 file3
-).gsub("\n", "\r\n")
-      output.should eq expected
+      expected = <<-BATCH
+        @REM this is some test code
+        copy file1 file2
+
+        @REM another
+        move file2 file3
+      BATCH
+
+      # Normalize line endings and strip indentation
+      expected_lines = expected.lines.map(&.strip)
+      expected_result = expected_lines.join("\r\n") + "\r\n"
+
+      output.should eq(expected_result)
     end
 
     it "convert line empty" do
@@ -398,7 +405,7 @@ move file2 file3
       output.should eq "set A=B"
     end
 
-    pending "convert line unset" do
+    it "convert line unset" do
       converter = ShellConverter.new
       output = converter.convert_line("unset A")
       output.should eq "set A="
@@ -440,25 +447,25 @@ move file2 file3
       output.should eq "mklink link_name target"
     end
 
-    pending "convert line symlink directory" do
+    it "convert line symlink directory" do
       converter = ShellConverter.new
       output = converter.convert_line("ln -s target/ link_name")
       output.should eq "mklink /D link_name target"
     end
 
-    pending "convert line hard link" do
+    it "convert line hard link" do
       converter = ShellConverter.new
       output = converter.convert_line("ln original.txt hard_link.txt")
       output.should eq "mklink /H hard_link.txt original.txt"
     end
 
-    pending "convert line invalid symlink" do
+    it "convert line invalid symlink" do
       converter = ShellConverter.new
       output = converter.convert_line("ln -s target")
       output.should eq "REM Error: ln -s requires both target and link name"
     end
 
-    pending "convert line invalid hard link" do
+    it "convert line invalid hard link" do
       converter = ShellConverter.new
       output = converter.convert_line("ln original.txt")
       output.should eq "REM Error: ln requires both target and link name"

@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 describe Shell2Batch do
-  pending "can convert a script" do
+  it "can convert a script" do
     script = <<-SCRIPT
                 set -x
 
@@ -48,10 +48,11 @@ describe Shell2Batch do
 
                     set MY_DIR=
 
-                    copy /B .\file3+,, .\file3
+                    copy /B .\\file3+,, .\\file3
 
                     @REM provide custom windows command for specific shell command
                     complex_windows_command /flag10 windows_value
+
                     CONVERTED
     # Windows batch files use \r\n line endings
     converted.should eq expected.gsub("\n", "\r\n")

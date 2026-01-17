@@ -52,7 +52,7 @@ module Shell2Batch
 
       # Environment variables
       add CommandMapping.new("export", "set")
-      add CommandMapping.new("unset", "set", [] of Tuple(String, String), [] of String, ["="])
+      # unset handled by special handler in shell_converter.cr
 
       # System
       add CommandMapping.new("set", "@echo", [{"-x", "on"}, {"\\+x", "off"}])

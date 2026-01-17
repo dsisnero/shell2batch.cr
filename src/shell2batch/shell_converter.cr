@@ -71,6 +71,10 @@ module Shell2Batch
                             handle_hash_command(arguments, "SHA1")
                           when "sha256sum"
                             handle_hash_command(arguments, "SHA256")
+                          when "unset"
+                            # unset VAR -> set VAR=
+                            # Concatenate = directly to the argument
+                            {"set", [] of Tuple(String, String), [] of String, [] of String, false}
                           else
                             # Default case - no special handling
                             {shell_command, [] of Tuple(String, String), [] of String, [] of String, false}
@@ -88,18 +92,6 @@ module Shell2Batch
           arguments = convert_path_separators(arguments)
         end
         windows_command = convert_path_separators(windows_command)
-
-        # Special handling for ln commands - reorder arguments for mklink
-        # ln -s target link_name → mklink link_name target
-        if shell_command == "ln" && arguments =~ /-s/
-          clean_args = arguments.gsub(/-s\s*/, "").strip
-          args_parts = clean_args.split
-          if args_parts.size >= 2
-            # Reorder arguments: target becomes link, link_name becomes target
-            reordered_args = [args_parts[1], args_parts[0]] + args_parts[2..-1]
-            arguments = reordered_args.join(" ")
-          end
-        end
 
         # Special handling for touch command - needs filename+,, filename format
         if shell_command == "touch"
@@ -128,6 +120,11 @@ module Shell2Batch
         windows_arguments = replace_vars(windows_arguments) if windows_arguments.size > 0
 
         windows_command = replace_vars(windows_command)
+
+        # Special handling for unset - append = directly
+        if shell_command == "unset" && windows_arguments.size > 0
+          windows_arguments = "#{windows_arguments}="
+        end
 
         # Add post arguments
         windows_arguments = if post_arguments.size > 0
@@ -340,14 +337,14 @@ module Shell2Batch
                           end
 
       # Handle empty script case
-      filtered_batch = windows_batch.reject(&.empty?)
-      return "" if filtered_batch.empty?
+      # Don't filter out empty lines - they should be preserved
+      return "" if windows_batch.empty?
 
       # Handle single line vs multi-line outputs differently
-      result = if filtered_batch.size == 1
-                 filtered_batch.first
+      result = if windows_batch.size == 1
+                 windows_batch.first
                else
-                 batch_text = filtered_batch.join("\r\n")
+                 batch_text = windows_batch.join("\r\n")
                  batch_text += "\r\n" unless batch_text.ends_with?("\r\n")
                  batch_text
                end
@@ -363,7 +360,7 @@ module Shell2Batch
         end
       end
 
-      result += "\r\n" unless result.ends_with?("\r\n") || filtered_batch.size == 1
+      result += "\r\n" unless result.ends_with?("\r\n") || windows_batch.size == 1
       result
     end
 
@@ -391,13 +388,47 @@ module Shell2Batch
     end
 
     private def handle_ln(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)
-      # Check for symbolic vs hard link
-      if arguments =~ /-s/
-        {"mklink", [] of Tuple(String, String), [] of String, [] of String, false}
-      elsif arguments =~ /-d/
-        {"mklink /D", [] of Tuple(String, String), [] of String, [] of String, false}
+      # Parse ln arguments
+      # Remove flags and split into parts
+      parts = arguments.strip.split(/\s+/)
+
+      # Filter out flags
+      non_flag_parts = parts.reject { |p| p.starts_with?("-") }
+
+      if non_flag_parts.size < 2
+        # Not enough arguments - return error comment
+        error_msg = if arguments.includes?("-s")
+                      "REM Error: ln -s requires both target and link name"
+                    else
+                      "REM Error: ln requires both target and link name"
+                    end
+        # Return error as windows command with non-empty post_arguments
+        # This makes should_clear_original_args true for ln
+        return {error_msg, [] of Tuple(String, String), [] of String, [""], false}
+      end
+
+      # Get target and link name (last two non-flag parts)
+      target = non_flag_parts[-2]
+      link_name = non_flag_parts[-1]
+
+      # Strip trailing slash from target if present
+      target = target.chomp("/")
+
+      # Check if target ends with / (directory) - check original before chomp
+      is_directory = non_flag_parts[-2].ends_with?("/") || arguments.includes?("-d")
+
+      # Determine mklink type
+      if arguments.includes?("-s")
+        if is_directory
+          # Directory symlink
+          {"mklink", [] of Tuple(String, String), ["/D"], [link_name, target], false}
+        else
+          # File symlink
+          {"mklink", [] of Tuple(String, String), [] of String, [link_name, target], false}
+        end
       else
-        {"mklink /H", [] of Tuple(String, String), [] of String, [] of String, false}
+        # Hard link
+        {"mklink", [] of Tuple(String, String), ["/H"], [link_name, target], false}
       end
     end
 
@@ -429,7 +460,9 @@ module Shell2Batch
       # For touch, we need to duplicate the filename: copy /B filename+,, filename
       # We'll handle this by using pre_arguments to add the filename with +,, suffix
       # and post_arguments to add the filename again
-      {"copy /B", [] of Tuple(String, String), ["#{arguments}+,,"], [arguments], true}
+      # Convert path separators for the arguments
+      converted_args = convert_path_separators(arguments)
+      {"copy /B", [] of Tuple(String, String), ["#{converted_args}+,,"], [converted_args], true}
     end
 
     # Handler for sleep command - convert seconds to timeout format
