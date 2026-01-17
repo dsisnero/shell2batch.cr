@@ -8,10 +8,13 @@ module Shell2Batch
       run(content, true)
     end
 
-    def convert_line(line : String) : String
+     def convert_line(line : String) : String
       if line.includes?(SHELL2BATCH_PREFIX)
         index = line.index!(SHELL2BATCH_PREFIX).to_i + SHELL2BATCH_PREFIX.size
         windows_command = line[index..].strip
+      elsif line.starts_with?("#!")
+        # Shebang line - ignore it
+        ""
       elsif line.starts_with?("#")
         windows_command = "@REM #{line[1..]}"
       else
@@ -94,8 +97,8 @@ module Shell2Batch
         # Modify paths
         if modify_path_separator
           arguments = convert_path_separators(arguments)
+          windows_command = convert_path_separators(windows_command)
         end
-        windows_command = convert_path_separators(windows_command)
 
         # Special handling for touch command - needs filename+,, filename format
         if shell_command == "touch"
@@ -232,13 +235,17 @@ module Shell2Batch
       # Convert shell conditions to batch equivalents
       case condition
       when /^!\s+-d\s+(.+)$/
-        "not exist \"#{$1}\\\""
+        path = strip_quotes($1)
+        "not exist \"#{path}\\\""
       when /^!\s+-f\s+(.+)$/
-        "not exist \"#{$1}\""
+        path = strip_quotes($1)
+        "not exist \"#{path}\""
       when /^-d\s+(.+)$/
-        "exist \"#{$1}\\\""
+        path = strip_quotes($1)
+        "exist \"#{path}\\\""
       when /^-f\s+(.+)$/
-        "exist \"#{$1}\""
+        path = strip_quotes($1)
+        "exist \"#{path}\""
       when /^-z\s+(.+)$/
         "\"#{$1}\"==\"\""
       when /(.+)\s+=\s+(.+)/
@@ -294,14 +301,11 @@ module Shell2Batch
         windows_batch << "    exit /b"
         windows_batch << ")"
         windows_batch << "@REM Script continues with admin privileges"
-      else
-        # Only add @echo off if script contains multiple actual commands (not just comments)
-        command_lines = script.split('\n').select { |line|
-          line = line.strip
-          !line.empty? && !line.starts_with?("#")
-        }
-        # Don't add @echo off for simple multi-line scripts (preserve test expectations)
-        # windows_batch << "@echo off" if command_lines.size > 1
+       else
+        # For main shell scripts, always add @echo off
+        if is_main_script && !script.strip.empty?
+          windows_batch << "@echo off"
+        end
       end
 
       i = 0
@@ -481,7 +485,16 @@ module Shell2Batch
     end
 
     private def handle_ls(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)
-      {"dir", [] of Tuple(String, String), [] of String, [] of String, true}
+      # Windows dir doesn't have -l flag, so we need to remove it
+      # Also handle -a (all files) which is /A in Windows
+      flag_mappings = [
+        {"-[lL]", ""},           # Remove -l flag
+        {"-[aA]", "/A"},         # -a -> /A (all files)
+        {"-t", "/O:D"},          # -t -> /O:D (sort by date)
+        {"-r", "/O:-D"},         # -r -> /O:-D (reverse sort)
+        {"-h", ""},              # Remove -h (human readable)
+      ]
+      {"dir", flag_mappings, [] of String, [] of String, true}
     end
 
     private def handle_touch(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)

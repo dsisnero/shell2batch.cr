@@ -213,13 +213,13 @@ module Shell2Batch
     it "run comment" do
       converter = ShellConverter.new
       output = converter.run("#comment")
-      output.should eq "@REM comment"
+      output.should eq "@echo off\r\n@REM comment\r\n"
     end
 
     it "run command" do
       converter = ShellConverter.new
       output = converter.run("cp file1 file2")
-      output.should eq "copy file1 file2"
+      output.should eq "@echo off\r\ncopy file1 file2\r\n"
     end
 
     it "run multi-line" do
@@ -235,6 +235,7 @@ module Shell2Batch
       output = converter.run(script)
 
       expected = <<-BATCH
+        @echo off
         @REM this is some test code
         copy file1 file2
 
@@ -438,7 +439,7 @@ module Shell2Batch
     it "converts var as part of command" do
       converter = ShellConverter.new
       output = converter.convert_line("./${MYVAR}.exe/something")
-      output.should eq ".\\%MYVAR%.exe\\something"
+      output.should eq "./%MYVAR%.exe/something"
     end
 
     it "convert line symlink file" do

@@ -14,6 +14,7 @@ describe Shell2Batch::ShellConverter do
       result = converter.convert(script)
 
       expected = <<-BATCH
+        @echo off
         call :greet World
         goto :eof
         :greet

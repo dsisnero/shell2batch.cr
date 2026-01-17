@@ -154,7 +154,7 @@ module Shell2Batch
 
     private def convert_variable(var : MakefileVariable) : String
       # Check if this variable contains complex expressions
-      if var.value.includes?("$(wildcard") || var.value.includes?("$(patsubst")
+      if var.value.includes?("$(wildcard") || var.value.includes?("$(patsubst") || var.value =~ /\$\([a-zA-Z_][a-zA-Z0-9_]*:\./
         # This is a complex variable that needs batch-style handling
         return handle_complex_variable(var)
       else
@@ -241,8 +241,8 @@ module Shell2Batch
       # Handle automatic variables
       command = expand_automatic_variables(command, target, dependencies)
 
-      # Expand Makefile variables (but don't evaluate functions)
-      command = expand_makefile_variables(command, false)
+      # Expand Makefile variables (evaluate functions when possible)
+      command = expand_makefile_variables(command, true)
 
       # Special handling for complex patterns
       # Handle $(patsubst ...) patterns
@@ -366,6 +366,29 @@ module Shell2Batch
         changed = false
         original = result
 
+        # Handle suffix replacement patterns: $(VAR:.c=.o)
+        result = result.gsub(/\$\(([a-zA-Z_][a-zA-Z0-9_]*):\.([^=]+)=\.([^)]+)\)/) do |match|
+          var_name = $1
+          from_suffix = $2
+          to_suffix = $3
+          
+          if evaluate && (source_value = @variables_hash[var_name]?)
+            # Replace .c with .o in each file
+            files = source_value.split
+            transformed_files = files.map do |file|
+              if file.ends_with?(".#{from_suffix}")
+                file[0...-(".#{from_suffix}".size)] + ".#{to_suffix}"
+              else
+                file
+              end
+            end
+            transformed_files.join(" ")
+          else
+            # Can't evaluate - return as variable reference
+            "%#{var_name}%"
+          end
+        end
+
         # Handle patsubst function first (it may contain other functions)
         result = result.gsub(/\$\(patsubst\s+([^,]+),\s*([^,]+),\s*([^)]+)\)/) do |match|
           pattern = $1.strip
@@ -401,10 +424,12 @@ module Shell2Batch
     end
 
     private def evaluate_wildcard(pattern : String) : String
+      # Resolve any variables in the pattern
+      resolved_pattern = resolve_variable(pattern)
       # For now, just convert to batch command
       # In a more advanced implementation, we could actually run the command
       # and get the file list at conversion time
-      "dir /b #{pattern} 2>nul"
+      "dir /b #{resolved_pattern} 2>nul"
     end
 
     private def evaluate_patsubst(pattern : String, replacement : String, text_list : String) : String
@@ -580,6 +605,10 @@ module Shell2Batch
         end
       end
 
+      # Convert common shell commands in variable values
+      # This handles cases like RM = rm -rf in Makefiles
+      result = convert_shell_commands_in_value(result)
+
       # If resolving for a target name and the result contains spaces,
       # take only the first part (e.g., "main.o utils.o" -> "main.o")
       if for_target && result.includes?(" ")
@@ -592,6 +621,50 @@ module Shell2Batch
     private def handle_complex_variable(var : MakefileVariable) : String
       # Handle complex variables with wildcard and patsubst functions
       value = var.value
+
+      # Check for suffix replacement patterns: $(VAR:.c=.o)
+      if value =~ /\$\(([a-zA-Z_][a-zA-Z0-9_]*):\.([^=]+)=\.([^)]+)\)/
+        # This is a suffix replacement pattern like $(SOURCES:.c=.o)
+        var_name = $1
+        from_suffix = $2
+        to_suffix = $3
+        
+        # Get the source variable value
+        if source_value = @variables_hash[var_name]?
+          # Check if source_value contains a function (like wildcard)
+          if source_value =~ /\$\(wildcard/
+            # It's a wildcard function - can't evaluate statically
+            # Return a comment with batch equivalent
+            if match = source_value.match(/\$\(wildcard\s+([^)]+)\)/)
+              wildcard_pattern = match[1]
+              return "rem #{var.name} - use: for /f %%f in ('dir /b #{wildcard_pattern} 2^>nul') do echo %%~nf.o"
+            else
+              return "rem #{var.name} = #{value} (complex expression - needs manual conversion)"
+            end
+          elsif source_value =~ /\$\(/
+            # Some other function - can't evaluate statically
+            return "rem #{var.name} = #{value} (complex expression - needs manual conversion)"
+          else
+            # Replace .c with .o in each file
+            # Split by spaces and replace suffix
+            files = source_value.split
+            transformed_files = files.map do |file|
+              if file.ends_with?(".#{from_suffix}")
+                file[0...-(".#{from_suffix}".size)] + ".#{to_suffix}"
+              else
+                file
+              end
+            end
+            
+            # Return the transformed list
+            return "set #{var.name}=#{transformed_files.join(" ")}"
+          end
+        else
+          # Variable not found yet - might be defined later
+          # Return a placeholder that will be resolved later
+          return "set #{var.name}=%#{var_name}%"
+        end
+      end
 
       # Check for patsubst patterns
       if value =~ /\$\(patsubst/
@@ -650,22 +723,49 @@ module Shell2Batch
 
       # Check for wildcard only
       if value =~ /\$\(wildcard[^)]+\)/
-        # Extract the pattern
-        if match = value.match(/\$\(wildcard\s+([^)]+)\)/)
-          wildcard_pattern = match[1]
-          # Return a batch command that lists files
-          return "rem #{var.name} - use: dir /b #{wildcard_pattern} 2>nul"
-        end
-      end
-
-      # Check for wildcard with nested variable
-      if value =~ /\$\(wildcard\s+\$\(/
-        # This is a wildcard with a variable inside
-        # Extract as much as we can
-        if match = value.match(/\$\(wildcard\s+([^)]+)\)/)
-          wildcard_pattern = match[1]
-          # Return a batch command that lists files
-          return "rem #{var.name} - use: dir /b #{wildcard_pattern} 2>nul"
+        # Extract the pattern - need to handle nested parentheses
+        # Match from wildcard to the matching closing paren
+        paren_count = 0
+        in_pattern = false
+        pattern = ""
+        
+        # Simple approach: find the matching closing paren
+        # Start after "wildcard"
+        if idx = value.index("wildcard")
+          start_idx = idx + "wildcard".size
+          # Skip whitespace
+          while start_idx < value.size && value[start_idx].whitespace?
+            start_idx += 1
+          end
+          
+          # Now find matching closing paren
+          paren_count = 0
+          i = start_idx
+          while i < value.size
+            ch = value[i]
+            if ch == '('
+              paren_count += 1
+            elsif ch == ')'
+              if paren_count == 0
+                # Found the closing paren for wildcard
+                pattern = value[start_idx...i]
+                break
+              else
+                paren_count -= 1
+              end
+            end
+            i += 1
+          end
+          
+          if !pattern.empty?
+            # Resolve any variables in the pattern
+            resolved_pattern = resolve_variable(pattern)
+            # Store the evaluated wildcard command in variables_hash for later reference
+            # This allows $(SOURCES) to be expanded to dir /b src/*.c 2>nul
+            @variables_hash[var.name] = "dir /b #{resolved_pattern} 2>nul"
+            # Return a batch command that lists files
+            return "rem #{var.name} - use: dir /b #{resolved_pattern} 2>nul"
+          end
         end
       end
 
@@ -680,6 +780,30 @@ module Shell2Batch
       else
         nil
       end
+    end
+
+    private def convert_shell_commands_in_value(value : String) : String
+      # Convert shell commands that appear in variable values
+      result = value.dup
+      
+      # Handle rm -rf -> rmdir /S /Q
+      if result == "rm -rf"
+        result = "rmdir /S /Q"
+      elsif result == "mkdir -p"
+        result = "mkdir"
+      end
+      
+      # Also resolve variable references
+      result = result.gsub(/\$\(([a-zA-Z_][a-zA-Z0-9_]*)\)/) do |match|
+        var_name = $1
+        if var_value = @variables_hash[var_name]?
+          var_value
+        else
+          match
+        end
+      end
+      
+      result
     end
 
     private def convert_shell_command(command : String) : String

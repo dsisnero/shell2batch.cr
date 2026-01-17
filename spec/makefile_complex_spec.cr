@@ -62,7 +62,7 @@ module Shell2Batch
 
       # @mkdir -p should convert to @mkdir (with @ for suppression)
       output.should contain("@mkdir")
-      output.should contain("%OBJ_DIR%")
+      output.should contain("obj")
     end
 
     it "correctly expands automatic variables $@ and $^ in commands" do

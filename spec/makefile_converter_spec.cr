@@ -15,7 +15,7 @@ module Shell2Batch
       output.should contain(":all")
       output.should contain(":hello")  # $(TARGET) resolved to hello
       output.should contain(":clean")
-      output.should contain("del /Q %TARGET%")
+      output.should contain("del /Q hello")
     end
 
     it "converts Makefile with variables and commands" do

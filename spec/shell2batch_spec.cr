@@ -29,6 +29,7 @@ describe Shell2Batch do
               SCRIPT
     converted = Shell2Batch.convert(script)
     expected = <<-CONVERTED
+                    @echo off
                     @echo on
 
                     set FILE1=file1
@@ -52,10 +53,11 @@ describe Shell2Batch do
 
                     @REM provide custom windows command for specific shell command
                     complex_windows_command /flag10 windows_value
-
-                    CONVERTED
-    # Windows batch files use \r\n line endings
-    converted.should eq expected.gsub("\n", "\r\n")
+                  CONVERTED
+    # Strip leading spaces from each line of expected output
+    expected_lines = expected.lines.map(&.strip)
+    expected_result = expected_lines.join("\r\n") + "\r\n"
+    converted.should eq expected_result
   end
 
   describe "file type detection" do
