@@ -1,2 +1,6 @@
 require "spec"
 require "../src/shell2batch/converter"
+require "../src/shell2batch/shell_converter"
+require "../src/shell2batch/base_converter"
+require "../src/shell2batch/command_mappings"
+require "../src/shell2batch/common_utils"

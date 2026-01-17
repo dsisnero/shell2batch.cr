@@ -1,0 +1,294 @@
+[2m2025-09-25T10:47:13.365141Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-25T10:47:13.365381Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-25T10:47:13.365389Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-25T10:47:13.365523Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-25T10:47:13.365907Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-25T10:47:13.366159Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-25T10:47:13.366526Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-25T10:47:13.366798Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-25T10:47:13.367335Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-25T10:47:13.367404Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-25T10:50:51.318860Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-25T10:50:55.232516Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-25T10:50:55.233300Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-25T10:50:55.233309Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-25T10:50:55.233470Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-25T10:50:55.233714Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-25T10:50:55.233912Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-25T10:50:55.234211Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-25T10:50:55.234447Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-25T10:50:55.234983Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-25T10:50:55.235038Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-25T10:54:22.655318Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-25T10:54:22.655546Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-25T10:54:24.995411Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-25T10:54:24.995474Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-25T10:54:24.995481Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-25T10:54:24.995532Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-25T10:54:24.995634Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-25T10:54:24.995735Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-25T10:54:24.995885Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-25T10:54:24.995994Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-25T10:54:24.996541Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-25T10:54:24.996614Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-25T20:55:25.497149Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-25T20:55:25.497436Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-29T04:54:29.038151Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-29T04:54:29.039506Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-29T04:54:29.039788Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-29T04:54:29.040197Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-29T04:54:29.040747Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-29T04:54:29.041080Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-29T04:54:29.041594Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-29T04:54:29.041994Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-29T04:54:29.047870Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-29T04:54:29.047923Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-29T08:54:04.827089Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-29T08:54:04.828164Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-29T08:54:04.828401Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-29T08:54:04.828785Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-29T08:54:04.829190Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-29T08:54:04.829533Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-29T08:54:04.830011Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-29T08:54:04.830213Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-29T08:54:04.835203Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-29T08:54:04.835327Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-29T08:56:03.540160Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-29T08:56:03.541095Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-29T09:20:55.202666Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-29T09:20:55.202891Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-29T09:20:55.202900Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-29T09:20:55.203082Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-29T09:20:55.203429Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-29T09:20:55.203712Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-29T09:20:55.204115Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-29T09:20:55.204412Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-29T09:20:55.204923Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-29T09:20:55.205004Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-29T09:34:14.945304Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-29T09:34:14.945651Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-29T09:34:38.808769Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-29T09:34:38.809000Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-29T09:34:38.809007Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-29T09:34:38.809180Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-29T09:34:38.809595Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-29T09:34:38.809859Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-29T09:34:38.810250Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-29T09:34:38.810521Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-29T09:34:38.811035Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-29T09:34:38.811090Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-29T09:43:34.688172Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-29T09:43:43.355081Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-29T09:43:43.355311Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-29T09:43:43.355318Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-29T09:43:43.355492Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-29T09:43:43.355835Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-29T09:43:43.356095Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-29T09:43:43.356478Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-29T09:43:43.356765Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-29T09:43:43.357288Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-29T09:43:43.357367Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-29T09:49:29.167934Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-29T09:49:46.813392Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-29T09:49:46.813560Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T03:10:54.107741Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T03:10:54.108530Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T03:10:54.108788Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T03:10:54.109115Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T03:10:54.109653Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T03:10:54.109904Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T03:10:54.110269Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T03:10:54.110543Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T03:10:54.114386Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T03:10:54.114569Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T07:55:55.248402Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T07:55:55.249366Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T07:55:55.249676Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T07:55:55.250158Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T07:55:55.250602Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T07:55:55.250868Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T07:55:55.251273Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T07:55:55.251594Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T07:55:55.255403Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T07:55:55.255497Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:08:03.375277Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:08:03.376340Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:08:17.026219Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T09:08:17.026592Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T09:08:17.026606Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T09:08:17.026949Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T09:08:17.027388Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T09:08:17.027732Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T09:08:17.028229Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T09:08:17.028597Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T09:08:17.029565Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T09:08:17.029595Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:09:53.350171Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:09:53.350320Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:10:34.293128Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T09:10:34.293214Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T09:10:34.293225Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T09:10:34.293369Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T09:10:34.293513Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T09:10:34.293645Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T09:10:34.293870Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T09:10:34.294034Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T09:10:34.294927Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T09:10:34.294966Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:12:14.612439Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:12:14.612633Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:13:08.147271Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T09:13:08.147352Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T09:13:08.147363Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T09:13:08.147422Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T09:13:08.147550Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T09:13:08.147670Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T09:13:08.147875Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T09:13:08.148018Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T09:13:08.148820Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T09:13:08.148855Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:14:48.469077Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:14:48.469252Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:15:07.166569Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T09:15:07.166679Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T09:15:07.166689Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T09:15:07.166756Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T09:15:07.166906Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T09:15:07.167032Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T09:15:07.167238Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T09:15:07.167388Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T09:15:07.168240Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T09:15:07.168337Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:17:50.557128Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:17:55.616211Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:18:05.901720Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:18:06.064846Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:18:06.709432Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:18:22.296968Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:18:22.446007Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:21:12.904239Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:21:12.904533Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:21:47.424006Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T09:21:47.424072Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T09:21:47.424081Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T09:21:47.424134Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T09:21:47.424228Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T09:21:47.424323Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T09:21:47.424484Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T09:21:47.424596Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T09:21:47.425120Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T09:21:47.425168Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:22:55.678122Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:22:55.678281Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:23:35.239573Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:23:35.239838Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-09-30T09:24:07.617443Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-09-30T09:24:07.617505Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-09-30T09:24:07.617513Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-09-30T09:24:07.617564Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-09-30T09:24:07.617658Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-09-30T09:24:07.617746Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-09-30T09:24:07.617907Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-09-30T09:24:07.618037Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-09-30T09:24:07.618656Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-09-30T09:24:07.618724Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-09-30T09:25:17.872028Z[0m [31mERROR[0m [2msimple_completion_language_server[0m[2m:[0m On complete by words: matching with an empty pattern string is not supported for this operation
+[2m2025-09-30T09:30:53.381381Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-09-30T09:30:53.381686Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
+[2m2025-10-03T09:47:37.965391Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/snippets/ruby.toml" for scope: Some(["ruby"])
+[2m2025-10-03T09:47:37.965755Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read snippets from "/Users/dominic/.config/helix/snippets/ruby.toml": TOML parse error at line 1, column 1
+  |
+1 | [[snippet]]
+  | ^
+missing field `snippets`
+
+[2m2025-10-03T09:47:37.965773Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try read config from: "/Users/dominic/.config/helix/external-snippets.toml"
+[2m2025-10-03T09:47:37.966321Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/python/python.json" for scope: Some(["python"])
+[2m2025-10-03T09:47:37.966851Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/ruby/ruby.json" for scope: Some(["ruby"])
+[2m2025-10-03T09:47:37.967548Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/asciidoc.json" for scope: Some(["asciidoc"])
+[2m2025-10-03T09:47:37.968526Z[0m [32m INFO[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m Try load snippets from: "/Users/dominic/.config/helix/external-snippets/github.com/rafamadriz/friendly-snippets.git/snippets/markdown.json" for scope: Some(["markdown"])
+[2m2025-10-03T09:47:37.968960Z[0m [31mERROR[0m [2msimple_completion_language_server::snippets::config[0m[2m:[0m On read dir "/Users/dominic/.config/helix/unicode-input": No such file or directory (os error 2)
+[2m2025-10-03T09:47:37.970064Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m server initialized!
+[2m2025-10-03T09:47:37.970141Z[0m [32m INFO[0m [2msimple_completion_language_server::server[0m[2m:[0m Did change configuration: DidChangeConfigurationParams { settings: Object {"feature_paths": Bool(true), "feature_snippets": Bool(true), "feature_unicode_input": Bool(true), "feature_words": Bool(true), "max_completion_items": Number(20), "snippets_first": Bool(true)} }
+[2m2025-10-04T23:46:27.318257Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m shutdown request received, shutting down
+[2m2025-10-04T23:46:27.318769Z[0m [32m INFO[0m [2mtower_lsp::service::layers[0m[2m:[0m exit notification received, stopping
