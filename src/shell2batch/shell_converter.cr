@@ -49,9 +49,13 @@ module Shell2Batch
                             handle_rm(arguments)
                           when "ln"
                             handle_ln(arguments)
-                          when "curl"
+                           when "curl"
                             handle_curl(arguments)
-                          when "unzip"
+                           when "wget"
+                            handle_wget(arguments)
+                           when "tar"
+                            handle_tar(arguments)
+                           when "unzip"
                             handle_unzip(arguments)
                           when "sudo"
                             handle_sudo(arguments)
@@ -227,6 +231,10 @@ module Shell2Batch
     private def convert_shell_condition(condition : String) : String
       # Convert shell conditions to batch equivalents
       case condition
+      when /^!\s+-d\s+(.+)$/
+        "not exist \"#{$1}\\\""
+      when /^!\s+-f\s+(.+)$/
+        "not exist \"#{$1}\""
       when /^-d\s+(.+)$/
         "exist \"#{$1}\\\""
       when /^-f\s+(.+)$/
@@ -250,11 +258,11 @@ module Shell2Batch
         line = lines[index].strip
 
         case line
-        when /^if\s+\[\s+(.+)\s+\];\s+then$/
-          condition = convert_shell_condition($1)
+        when /^if\s+\[\s*(.+?)\s*\](?:\s*;\s*then)?$/
+          condition = convert_shell_condition($1.strip)
           result << "if #{condition} ("
-        when /^elif\s+\[\s+(.+)\s+\];\s+then$/
-          condition = convert_shell_condition($1)
+        when /^elif\s+\[\s*(.+?)\s*\](?:\s*;\s*then)?$/
+          condition = convert_shell_condition($1.strip)
           result << ") else if #{condition} ("
         when "else"
           result << ") else ("
@@ -303,7 +311,7 @@ module Shell2Batch
 
         if stripped_line.empty?
           windows_batch << ""
-        elsif stripped_line.starts_with?("if [")
+         elsif stripped_line.starts_with?("if [") || stripped_line.starts_with?("if [[")
           converted, new_index = convert_if_statement(lines, i)
           windows_batch << converted
           i = new_index
@@ -319,8 +327,8 @@ module Shell2Batch
         i += 1
       end
 
-      # Only add download function if curl command was used
-      download_function = if script.includes?("curl") && is_main_script
+      # Only add download function if curl or wget command was used
+      download_function = if (script.includes?("curl") || script.includes?("wget")) && is_main_script
                             <<-BATCH
         REM Function to download a file using bitsadmin
         :download
@@ -436,12 +444,32 @@ module Shell2Batch
       {"call :download", [] of Tuple(String, String), [] of String, [] of String, true}
     end
 
+    private def handle_wget(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)
+      # wget is similar to curl - convert to download function
+      {"call :download", [] of Tuple(String, String), [] of String, [] of String, true}
+    end
+
+    private def handle_tar(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)
+      # tar -xf file.tar.gz -> tar -xf file.tar.gz (Windows 10+ has tar)
+      # For older Windows, could use 7z or powershell
+      {"tar", [] of Tuple(String, String), [] of String, [] of String, true}
+    end
+
     private def handle_unzip(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)
       {"powershell -command \"Expand-Archive", [] of Tuple(String, String), [] of String, ["-Force\""], false}
     end
 
     private def handle_sudo(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)
-      {"runas /user:Administrator", [] of Tuple(String, String), [] of String, ["\""], false}
+      # For sudo, we need to convert the command inside it
+      # The arguments should be the entire command to run with sudo
+      if arguments.strip.empty?
+        return {"runas /user:Administrator", [] of Tuple(String, String), [] of String, [] of String, false}
+      end
+
+      # Convert path separators in the arguments
+      converted_args = convert_path_separators(arguments)
+      # Return with the command as post_arguments (will clear regular arguments)
+      {"runas /user:Administrator", [] of Tuple(String, String), [] of String, ["\"#{converted_args}\""], false}
     end
 
     private def handle_echo(arguments : String) : Tuple(String, Array(Tuple(String, String)), Array(String), Array(String), Bool)

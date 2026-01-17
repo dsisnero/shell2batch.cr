@@ -154,7 +154,24 @@ module Shell2Batch
       if path.includes?("http://") || path.includes?("https://")
         path
       else
-        path.gsub("/", "\\")
+        # Simple approach: don't convert patterns that look like command flags
+        # This is a simplified implementation
+        result = String::Builder.new
+        i = 0
+        while i < path.size
+          if i + 6 <= path.size && path[i..i+5] == "/user:"
+            # Keep /user: as is
+            result << "/user:"
+            i += 6
+          elsif path[i] == '/'
+            result << '\\'
+            i += 1
+          else
+            result << path[i]
+            i += 1
+          end
+        end
+        result.to_s
       end
     end
 
